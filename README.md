@@ -18,7 +18,7 @@ https://image-compressor.github.io
 
 
 ```
-git clone https://github.com/abdarker/image-compressor.git
+git clone https://github.com/abue-ammar/image-compressor.git
 cd image-compressor
 npm install
 npm start
@@ -35,7 +35,7 @@ Contributions are always welcome!
     
 ## Authors
 
-- [@abdarker](https://www.github.com/abdarker)
+- [@abue-ammar](https://www.github.com/abue-ammar)
 - [@image-compressor](https://www.github.com/image-compressor)
 
 

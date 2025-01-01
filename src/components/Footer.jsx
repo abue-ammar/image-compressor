@@ -18,7 +18,7 @@ const Footer = () => {
         by{" "}
         <a
           target="_blank"
-          href="https://github.com/abdarker"
+          href="https://github.com/abue-ammar"
           className="underline text-black"
         >
           Abue Ammar.

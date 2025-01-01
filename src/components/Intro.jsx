@@ -19,7 +19,7 @@ const Intro = () => {
           target="_blank"
           rel="noreferrer"
           className="inline-flex items-center rounded-lg bg-[#f4f4f5] hover:bg-[#e5e5e5] px-3 py-1 text-sm font-medium"
-          href="https://github.com/abdarker/image-compressor"
+          href="https://github.com/abue-ammar/image-compressor"
         >
           <svg viewBox="0 0 438.549 438.549" className="h-4 w-4">
             <path
