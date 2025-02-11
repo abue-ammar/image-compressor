@@ -180,11 +180,11 @@ const MainContent = () => {
               } `}
             >
               <span className="font-semibold">Click to upload</span> or drag and
-              drop
+              drop multiple images
             </p>
             <p className="text-gray-500">jpg, jpeg, png, webp</p>
             <p className="text-[#ff4d4f] text-sm">
-              **png image size needs to be &gt; 120Kb
+              **png formatted image need to be larger than 120kb
             </p>
           </div>
 

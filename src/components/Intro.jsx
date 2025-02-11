@@ -4,15 +4,34 @@ const Intro = () => {
       <h1 className="text-center text-3xl font-bold leading-tight tracking-tighter md:text-6xl lg:leading-[1.1]">
         Free and Open Source Image Compressor
       </h1>
-      <span className="max-w-[750px] text-center text-lg sm:text-xl">
-        Optimizes images{" "}
-        <span className="font-semibold underline">locally</span> , delivering
-        unmatched efficiency{" "}
-        <span className="font-semibold underline">
-          without storing a single file.
+      <span className="max-w-[750px] text-center text-lg sm:text-xl !font-normal">
+        Optimize your images effortlessly with our{" "}
+        <span className="font-semibold text-blue-600">
+          Free and Open Source Image Compressor
+        </span>
+        . Experience{" "}
+        <span className="font-semibold text-blue-600">
+          lightning-fast, unlimited compression
         </span>{" "}
-        Experience lightning-fast compression, all in one place.
+        directly on your device—
+        <span className="font-semibold text-blue-600">no uploads, no APIs</span>
+        , and it even works{" "}
+        <span className="font-semibold text-blue-600">offline</span>. Your files
+        remain secure and stays in your device.
       </span>
+      <div>
+        <a
+          href="https://www.producthunt.com/posts/image-compressor-4?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-image-compressor-4"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=866606&theme=light"
+            alt="Image Compressor - Compress images fast, securely, and for free—no API call | Product Hunt"
+            style={{ width: "250px", height: "54px" }}
+          />
+        </a>
+      </div>
 
       <div className="flex w-full items-center justify-center space-x-4 pt-2">
         <a
