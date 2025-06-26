@@ -2,7 +2,17 @@ import { PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { formatFileSize } from "../utils/utils";
 
-const ImageInfoCard = ({ handleSingleDownload, ...props }) => {
+const ImageInfoCard = ({
+  handleSingleDownload,
+  ...props
+}: {
+  handleSingleDownload: (file: string) => void;
+  content: string;
+  fileName: string;
+  originalSize: number;
+  compressedSize: number;
+  compressRate: string;
+}) => {
   return (
     <div className="flex overflow-hidden rounded-lg bg-white shadow hover:shadow-md">
       <div className="relative inline-block cursor-pointer">

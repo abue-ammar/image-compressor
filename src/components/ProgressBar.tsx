@@ -1,4 +1,4 @@
-const ProgressBar = ({ width }) => {
+const ProgressBar = ({ width }: { width: number }) => {
   return (
     <>
       <span className="text-xs">{width}%</span>

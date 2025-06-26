@@ -1,4 +1,10 @@
-const QualitySlider = ({ value, setValue, handleRangeChange }) => {
+const QualitySlider = ({
+  value,
+  handleRangeChange,
+}: {
+  value: number;
+  handleRangeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}) => {
   return (
     <div>
       <label className="font-medium md:text-lg md:font-semibold">
