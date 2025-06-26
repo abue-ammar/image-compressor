@@ -1,6 +1,6 @@
 import Compressor from "compressorjs";
 import JSZip from "jszip";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { PhotoProvider } from "react-photo-view";
 import ImageInfoCard from "./ImageInfoCard";
 import Intro from "./Intro";
@@ -147,8 +147,7 @@ const MainContent = () => {
       />
       <div className="">
         <label
-          className={`flex justify-center items-center cursor-pointer h-30 md:40 border-2 border-dashed rounded-lg
-        ${isDragActive ? "bg-gray-100 border-gray-700" : "border-gray-300"}`}
+          className={`md:40 flex h-30 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed ${isDragActive ? "border-gray-700 bg-gray-100" : "border-gray-300"}`}
           onDrop={handleImageDrop}
           onDragOver={handleDragOver}
           onDragEnter={handleDragEnter}
@@ -163,7 +162,7 @@ const MainContent = () => {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className={`w-9 h-9 md:mb-2 ${
+              className={`h-9 w-9 md:mb-2 ${
                 isDragActive ? "text-gray-700" : "text-gray-500"
               } `}
             >
@@ -175,7 +174,7 @@ const MainContent = () => {
             </svg>
 
             <p
-              className={`md:text-lg  ${
+              className={`md:text-lg ${
                 isDragActive ? "text-gray-700" : "text-gray-500"
               } `}
             >
@@ -183,7 +182,7 @@ const MainContent = () => {
               drop multiple images
             </p>
             <p className="text-gray-500">jpg, jpeg, png, webp</p>
-            <p className="text-[#ff4d4f] text-sm">
+            <p className="text-sm text-[#ff4d4f]">
               **png formatted image need to be larger than 120kb
             </p>
           </div>
@@ -201,7 +200,7 @@ const MainContent = () => {
           {compressedImages?.length > 0 && (
             <div className="mr-2">
               <button
-                className="inline-flex items-center px-3 py-1 bg-black hover:bg-black/80 text-white text-sm font-medium rounded-md"
+                className="inline-flex items-center rounded-md bg-black px-3 py-1 text-sm font-medium text-white hover:bg-black/80"
                 onClick={handleDownload}
               >
                 <svg
@@ -224,7 +223,7 @@ const MainContent = () => {
           )}
           {filelist?.length > 0 && (
             <button
-              className="inline-flex items-center px-3 py-1 bg-[#ff4d4f] hover:bg-[#ff4d4f]/85 text-white text-sm font-medium rounded-md"
+              className="inline-flex items-center rounded-md bg-[#ff4d4f] px-3 py-1 text-sm font-medium text-white hover:bg-[#ff4d4f]/85"
               onClick={() => {
                 setValue(60);
                 setCompressProgress(0);
@@ -265,7 +264,7 @@ const MainContent = () => {
           <>
             <PhotoProvider>
               {compressedImages?.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-4">
+                <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-3">
                   {compressedImages?.map((image, i) => (
                     <ImageInfoCard
                       key={i}

@@ -1,9 +1,7 @@
-import React from "react";
-
 const QualitySlider = ({ value, setValue, handleRangeChange }) => {
   return (
     <div>
-      <label className="md:text-lg md:font-semibold font-medium">
+      <label className="font-medium md:text-lg md:font-semibold">
         Image Quality: {value / 100}{" "}
         {value / 100 == 0 ? (
           <span className="text-[#ff4d4f]">(Not Recommended)</span>
@@ -15,32 +13,32 @@ const QualitySlider = ({ value, setValue, handleRangeChange }) => {
           <span className="text-[#ff4d4f]">(Not Recommended)</span>
         )}
       </label>
-      <div className="relative mb-6 -mt-1.5">
+      <div className="relative -mt-1.5 mb-6">
         <input
           type="range"
-          className="range w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-sm"
+          className="range range-sm h-1 w-full cursor-pointer appearance-none rounded-lg bg-gray-200"
           value={value}
           min={0}
           max={100}
           step={20}
           onChange={handleRangeChange}
         />
-        <span className="text-sm text-[#ff4d4f] absolute start-0 -bottom-5">
+        <span className="absolute start-0 -bottom-5 text-sm text-[#ff4d4f]">
           0
         </span>
-        <span className="text-sm text-[#fadb14] absolute start-[20%] -translate-x-1/2 -bottom-5">
+        <span className="absolute start-[20%] -bottom-5 -translate-x-1/2 text-sm text-[#fadb14]">
           0.2
         </span>
-        <span className="text-sm text-[#fadb14] absolute start-[40.0%] -translate-x-1/2 -bottom-5">
+        <span className="absolute start-[40.0%] -bottom-5 -translate-x-1/2 text-sm text-[#fadb14]">
           0.4
         </span>
-        <span className="text-sm text-[#0fdd23] absolute start-[60%] -translate-x-1/2 -bottom-5">
+        <span className="absolute start-[60%] -bottom-5 -translate-x-1/2 text-sm text-[#0fdd23]">
           0.6
         </span>
-        <span className="text-sm text-[#0fdd23] absolute start-[80%] -translate-x-1/2 -bottom-5">
+        <span className="absolute start-[80%] -bottom-5 -translate-x-1/2 text-sm text-[#0fdd23]">
           0.8
         </span>
-        <span className="text-sm text-[#ff4d4f] absolute end-0 -bottom-5">
+        <span className="absolute end-0 -bottom-5 text-sm text-[#ff4d4f]">
           1
         </span>
       </div>

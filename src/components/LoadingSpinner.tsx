@@ -1,12 +1,10 @@
-import React from "react";
-
 const LoadingSpinner = () => {
   return (
     <li className="flex items-center">
       <div role="status">
         <svg
           aria-hidden="true"
-          className="w-5 h-5 me-2 text-gray-200 animate-spin fill-black"
+          className="me-2 h-5 w-5 animate-spin fill-black text-gray-200"
           viewBox="0 0 100 101"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
