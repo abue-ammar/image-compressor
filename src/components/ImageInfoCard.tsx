@@ -1,17 +1,27 @@
-import React from "react";
 import { PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
-import { formatFileSize } from "../../util/util";
-const ImageInfoCard = ({ handleSingleDownload, ...props }) => {
+import { formatFileSize } from "../utils/utils";
+
+const ImageInfoCard = ({
+  handleSingleDownload,
+  ...props
+}: {
+  handleSingleDownload: (file: string) => void;
+  content: string;
+  fileName: string;
+  originalSize: number;
+  compressedSize: number;
+  compressRate: string;
+}) => {
   return (
-    <div className="flex bg-white rounded-lg shadow hover:shadow-md overflow-hidden">
+    <div className="flex overflow-hidden rounded-lg bg-white shadow hover:shadow-md">
       <div className="relative inline-block cursor-pointer">
         <PhotoView src={props?.content}>
           <div>
             <img
               src={props?.content}
               alt={props?.fileName}
-              className="size-[100px] object-cover rounded-lg"
+              className="size-[100px] rounded-lg object-cover"
             />
             <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/25">
               <svg
@@ -20,7 +30,7 @@ const ImageInfoCard = ({ handleSingleDownload, ...props }) => {
                 viewBox="0 0 24 24"
                 strokeWidth={2}
                 stroke="currentColor"
-                className="w-6 h-6 text-[#fafafa]"
+                className="h-6 w-6 text-[#fafafa]"
               >
                 <path
                   strokeLinecap="round"
@@ -39,10 +49,10 @@ const ImageInfoCard = ({ handleSingleDownload, ...props }) => {
       </div>
 
       <div className="flex-1 px-2 py-1">
-        <h1 className="line-clamp-1 text-base md:text-lg font-semibold">
+        <h1 className="line-clamp-1 text-base font-semibold md:text-lg">
           {props?.fileName}
         </h1>
-        <span className="text-xs md:text-sm text-gray-500 flex items-center">
+        <span className="flex items-center text-xs text-gray-500 md:text-sm">
           <span className="text-[#ff4d4f]">
             {formatFileSize(props?.originalSize)}
           </span>
@@ -50,7 +60,7 @@ const ImageInfoCard = ({ handleSingleDownload, ...props }) => {
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
-            className="w-[18px] h-4 mb-[3px] text-black"
+            className="mb-[3px] h-4 w-[18px] text-black"
           >
             <path
               fillRule="evenodd"
@@ -66,7 +76,7 @@ const ImageInfoCard = ({ handleSingleDownload, ...props }) => {
         </span>
         <button
           onClick={() => handleSingleDownload(props?.content)}
-          className="rounded-md bg-[#0ecd0f] hover:bg-[#0ecd0f]/80 text-white px-2  inline-flex items-center mt-2"
+          className="mt-2 inline-flex items-center rounded-md bg-[#0ecd0f] px-2 text-white hover:bg-[#0ecd0f]/80"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +92,7 @@ const ImageInfoCard = ({ handleSingleDownload, ...props }) => {
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
-          <span className="text-sm mt-1">Download</span>
+          <span className="mt-1 text-sm">Download</span>
         </button>
       </div>
     </div>

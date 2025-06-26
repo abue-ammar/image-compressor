@@ -1,6 +1,6 @@
 import Compressor from "compressorjs";
 import JSZip from "jszip";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { PhotoProvider } from "react-photo-view";
 import ImageInfoCard from "./ImageInfoCard";
 import Intro from "./Intro";
@@ -8,63 +8,78 @@ import LoadingSpinner from "./LoadingSpinner";
 import ProgressBar from "./ProgressBar";
 import QualitySlider from "./QualitySlider";
 
-const MainContent = () => {
-  const [compressedImages, setCompressedImages] = useState([]);
-  const [zipFile, setZipFile] = useState(null);
-  const [isDragActive, setIsDragActive] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState(60); // Initial value
-  const [filelist, setFilelist] = useState([]);
-  const [compressProgress, setCompressProgress] = useState(0);
+type CompressedImage = {
+  fileName: string;
+  originalSize: number;
+  compressedSize: number;
+  fileType: string;
+  content: string;
+  compressRate: string;
+};
 
-  const handleRangeChange = async (event) => {
+const MainContent = () => {
+  const [compressedImages, setCompressedImages] = useState<CompressedImage[]>(
+    []
+  );
+  const [zipFile, setZipFile] = useState<Blob | null>(null);
+  const [isDragActive, setIsDragActive] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [value, setValue] = useState<number>(60); // Initial value
+  const [filelist, setFilelist] = useState<FileList | File[]>([]);
+  const [compressProgress, setCompressProgress] = useState<number>(0);
+
+  const handleRangeChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setValue(parseInt(event.target.value, 10));
   };
 
-  const handleImageDrop = async (e) => {
+  const handleImageDrop = async (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     setIsDragActive(false);
     setFilelist(e.dataTransfer.files);
   };
 
-  const handleImageUpload = async (e) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    setFilelist(e.target.files);
+    if (e.target.files) {
+      setFilelist(e.target.files);
+    }
   };
 
   useEffect(() => {
-    if (filelist.length > 0) {
-      handleImages(filelist);
+    const filesArr = Array.from(filelist as FileList | File[]);
+    if (filesArr.length > 0) {
+      handleImages(filesArr);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, filelist]);
 
-  const handleImages = async (files) => {
+  const handleImages = async (files: File[]) => {
     setLoading(true);
-    const compressedImgs = [];
+    const compressedImgs: CompressedImage[] = [];
     const zip = new JSZip();
     const img = zip.folder("compressed_images");
     let counter = files?.length;
     for (const file of files) {
       const compressedImg = await compressImage(file);
-      //   compressedImgs.push(compressedImg);
-      const base64Data = compressedImg.split(",")[1];
+      const base64Data = (compressedImg as string).split(",")[1];
       const binaryData = atob(base64Data);
-      // Get the length of the binary data
       const compressedDataSize = binaryData.length;
       const rate = ((file?.size - compressedDataSize) / file.size) * 100;
-      let dotIndex = file?.name?.lastIndexOf(".");
+      const dotIndex = file?.name?.lastIndexOf(".");
       compressedImgs.push({
         fileName:
           "compressed_" + file?.name?.slice(0, 8) + file?.name?.slice(dotIndex),
         originalSize: file.size,
         compressedSize: compressedDataSize,
         fileType: file.type,
-        content: compressedImg,
+        content: compressedImg as string,
         compressRate: rate.toFixed(2),
       });
-      const response = await fetch(compressedImg);
+      const response = await fetch(compressedImg as string);
       const blob = await response.blob();
-      img.file(`compressed_${file?.name}`, blob);
+      img?.file(`compressed_${file?.name}`, blob);
       counter = counter - 1;
       const progress = Math.floor(
         ((files?.length - counter) / files?.length) * 100
@@ -78,7 +93,7 @@ const MainContent = () => {
     setLoading(false);
   };
 
-  const compressImage = (file) => {
+  const compressImage = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       new Compressor(file, {
         maxWidth: undefined,
@@ -90,21 +105,21 @@ const MainContent = () => {
         quality: value / 100,
         convertSize: 120000,
         convertTypes: ["image/png"],
-        success(result) {
+        success(result: Blob) {
           const reader = new FileReader();
           reader.readAsDataURL(result);
           reader.onload = () => {
-            resolve(reader.result);
+            resolve(reader.result as string);
           };
         },
-        error(err) {
+        error(err: Error) {
           reject(err);
         },
       });
     });
   };
 
-  const handleDragOver = (e) => {
+  const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
   };
 
@@ -121,16 +136,21 @@ const MainContent = () => {
       const downloadLink = document.createElement("a");
       downloadLink.href = URL.createObjectURL(zipFile);
       downloadLink.download = "compressed_images.zip";
+      document.body.appendChild(downloadLink);
       downloadLink.click();
+      document.body.removeChild(downloadLink);
     }
   };
 
-  const handleSingleDownload = (file) => {
+  const handleSingleDownload = (file: string) => {
     const downloadLink = document.createElement("a");
     downloadLink.href = file;
-    var regexResult = /^data:(.+?)(?:;(?:.+?))?,/.exec(file);
-    var contentType = regexResult[1];
-    var extension = contentType.split("/")[1];
+    const regexResult = /^data:(.+?)(?:;(?:.+?))?,/.exec(file);
+    let extension = "jpg";
+    if (regexResult && regexResult[1]) {
+      const contentType = regexResult[1];
+      extension = contentType.split("/")[1] || "jpg";
+    }
     downloadLink.download = `compressed_image.${extension}`;
     document.body.appendChild(downloadLink);
     downloadLink.click();
@@ -140,15 +160,10 @@ const MainContent = () => {
   return (
     <div className="container mx-auto px-4">
       <Intro />
-      <QualitySlider
-        value={value}
-        handleRangeChange={handleRangeChange}
-        setValue={setValue}
-      />
+      <QualitySlider value={value} handleRangeChange={handleRangeChange} />
       <div className="">
         <label
-          className={`flex justify-center items-center cursor-pointer h-30 md:40 border-2 border-dashed rounded-lg
-        ${isDragActive ? "bg-gray-100 border-gray-700" : "border-gray-300"}`}
+          className={`md:40 flex h-30 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed ${isDragActive ? "border-gray-700 bg-gray-100" : "border-gray-300"}`}
           onDrop={handleImageDrop}
           onDragOver={handleDragOver}
           onDragEnter={handleDragEnter}
@@ -163,7 +178,7 @@ const MainContent = () => {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className={`w-9 h-9 md:mb-2 ${
+              className={`h-9 w-9 md:mb-2 ${
                 isDragActive ? "text-gray-700" : "text-gray-500"
               } `}
             >
@@ -175,7 +190,7 @@ const MainContent = () => {
             </svg>
 
             <p
-              className={`md:text-lg  ${
+              className={`md:text-lg ${
                 isDragActive ? "text-gray-700" : "text-gray-500"
               } `}
             >
@@ -183,8 +198,8 @@ const MainContent = () => {
               drop multiple images
             </p>
             <p className="text-gray-500">jpg, jpeg, png, webp</p>
-            <p className="text-[#ff4d4f] text-sm">
-              **png formatted image need to be larger than 120kb
+            <p className="text-sm text-[#ff4d4f]">
+              **png formatted images need to be larger than 120kb
             </p>
           </div>
 
@@ -201,7 +216,7 @@ const MainContent = () => {
           {compressedImages?.length > 0 && (
             <div className="mr-2">
               <button
-                className="inline-flex items-center px-3 py-1 bg-black hover:bg-black/80 text-white text-sm font-medium rounded-md"
+                className="inline-flex items-center rounded-md bg-black px-3 py-1 text-sm font-medium text-white hover:bg-black/80"
                 onClick={handleDownload}
               >
                 <svg
@@ -224,7 +239,7 @@ const MainContent = () => {
           )}
           {filelist?.length > 0 && (
             <button
-              className="inline-flex items-center px-3 py-1 bg-[#ff4d4f] hover:bg-[#ff4d4f]/85 text-white text-sm font-medium rounded-md"
+              className="inline-flex items-center rounded-md bg-[#ff4d4f] px-3 py-1 text-sm font-medium text-white hover:bg-[#ff4d4f]/85"
               onClick={() => {
                 setValue(60);
                 setCompressProgress(0);
@@ -265,7 +280,7 @@ const MainContent = () => {
           <>
             <PhotoProvider>
               {compressedImages?.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-4">
+                <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-3">
                   {compressedImages?.map((image, i) => (
                     <ImageInfoCard
                       key={i}
