@@ -5,7 +5,8 @@ const QualitySlider = ({
   value: number;
   handleRangeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
-  const quality = Math.round(value / 20) * 0.2;
+  // Use value/100 directly for quality, rounded to one decimal
+  const quality = Math.round((value / 100) * 10) / 10;
 
   const getQualityInfo = (q: number) => {
     if (q === 0) return { label: "Not Recommended", color: "#ff4d4f" };
@@ -13,6 +14,13 @@ const QualitySlider = ({
     if (q === 0.6 || q === 0.8)
       return { label: "Recommended", color: "#0fdd23" };
     if (q === 1) return { label: "Not Recommended", color: "#ff4d4f" };
+    // Handle floating point imprecision (e.g., 0.6000000001)
+    if (Math.abs(q - 0.6) < 0.05 || Math.abs(q - 0.8) < 0.05)
+      return { label: "Recommended", color: "#0fdd23" };
+    if (Math.abs(q - 0.2) < 0.05 || Math.abs(q - 0.4) < 0.05)
+      return { label: "Moderate", color: "#fadb14" };
+    if (Math.abs(q - 1) < 0.05)
+      return { label: "Not Recommended", color: "#ff4d4f" };
     return { label: "", color: "#000" };
   };
 
@@ -21,7 +29,7 @@ const QualitySlider = ({
   return (
     <div className="w-full">
       <label className="block font-medium md:text-lg md:font-semibold">
-        Image Quality: {(value / 100).toFixed(1)}{" "}
+        Image Quality: {value}%
         <span style={{ color }} className="ml-1">
           ({label})
         </span>
