@@ -48,7 +48,7 @@ const Intro = () => {
           </svg>
           <span className="mx-2 h-4 w-[1px] bg-gray-300"></span>
 
-          <span className="mt-1 text-black">Code is available on GitHub</span>
+          <span className="text-black">Code is available on GitHub</span>
           <svg
             width="15"
             height="15"

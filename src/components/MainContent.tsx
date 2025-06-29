@@ -163,7 +163,7 @@ const MainContent = () => {
       <QualitySlider value={value} handleRangeChange={handleRangeChange} />
       <div className="">
         <label
-          className={`md:40 flex h-30 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed ${isDragActive ? "border-gray-700 bg-gray-100" : "border-gray-300"}`}
+          className={`flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed ${isDragActive ? "border-gray-700 bg-gray-100" : "border-gray-300"}`}
           onDrop={handleImageDrop}
           onDragOver={handleDragOver}
           onDragEnter={handleDragEnter}
@@ -171,14 +171,14 @@ const MainContent = () => {
           htmlFor="file-input"
         >
           {/* Your drop area content */}
-          <div className="flex flex-col items-center justify-center py-5">
+          <div className="flex flex-col items-center justify-center p-4 text-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className={`h-9 w-9 md:mb-2 ${
+              className={`size-10 ${
                 isDragActive ? "text-gray-700" : "text-gray-500"
               } `}
             >
