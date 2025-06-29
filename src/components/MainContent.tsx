@@ -1,5 +1,6 @@
 import Compressor from "compressorjs";
 import JSZip from "jszip";
+import { ImageIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PhotoProvider } from "react-photo-view";
 import ImageInfoCard from "./ImageInfoCard";
@@ -163,46 +164,13 @@ const MainContent = () => {
       <QualitySlider value={value} handleRangeChange={handleRangeChange} />
       <div className="">
         <label
-          className={`flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed ${isDragActive ? "border-gray-700 bg-gray-100" : "border-gray-300"}`}
+          className={`border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-40 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px] ${isDragActive ? "border-blue-400 shadow-2xl duration-500" : ""}`}
           onDrop={handleImageDrop}
           onDragOver={handleDragOver}
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
           htmlFor="file-input"
         >
-          {/* Your drop area content */}
-          <div className="flex flex-col items-center justify-center p-4 text-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className={`size-10 ${
-                isDragActive ? "text-gray-700" : "text-gray-500"
-              } `}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
-              />
-            </svg>
-
-            <p
-              className={`md:text-lg ${
-                isDragActive ? "text-gray-700" : "text-gray-500"
-              } `}
-            >
-              <span className="font-semibold">Click to upload</span> or drag and
-              drop multiple images
-            </p>
-            <p className="text-gray-500">jpg, jpeg, png, webp</p>
-            <p className="text-sm text-[#ff4d4f]">
-              **png formatted images need to be larger than 120kb
-            </p>
-          </div>
-
           <input
             multiple
             type="file"
@@ -210,7 +178,26 @@ const MainContent = () => {
             onChange={handleImageUpload}
             style={{ display: "none" }}
             id="file-input"
+            className="sr-only"
+            aria-label="Upload image file"
           />
+          <div className="flex flex-col items-center justify-center px-4 py-3 text-center">
+            <div
+              className="bg-background mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border"
+              aria-hidden="true"
+            >
+              <ImageIcon className="size-4 opacity-60" />
+            </div>
+            <p className="mb-1.5 text-base font-medium">
+              Drop your images here
+            </p>
+            <p className="text-muted-foreground text-sm">
+              JPG, JPEG, PNG, WEBP
+            </p>
+            <p className="text-destructive text-sm">
+              **PNG formatted images need to be larger than 120KB
+            </p>
+          </div>
         </label>
         <div className="mt-4 flex justify-end">
           {compressedImages?.length > 0 && (
