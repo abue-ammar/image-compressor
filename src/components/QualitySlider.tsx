@@ -5,22 +5,20 @@ const QualitySlider = ({
   value: number;
   handleRangeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
-  // Use value/100 directly for quality, rounded to one decimal
   const quality = Math.round((value / 100) * 10) / 10;
 
   const getQualityInfo = (q: number) => {
-    if (q === 0) return { label: "Not Recommended", color: "#ff4d4f" };
-    if (q === 0.2 || q === 0.4) return { label: "Moderate", color: "#fadb14" };
+    if (q === 0) return { label: "Not Recommended", color: "#e14f42" };
+    if (q === 0.2 || q === 0.4) return { label: "Moderate", color: "#f3d35f" };
     if (q === 0.6 || q === 0.8)
-      return { label: "Recommended", color: "#0fdd23" };
-    if (q === 1) return { label: "Not Recommended", color: "#ff4d4f" };
-    // Handle floating point imprecision (e.g., 0.6000000001)
+      return { label: "Recommended", color: "#3fc97f" };
+    if (q === 1) return { label: "Not Recommended", color: "#e14f42" };
     if (Math.abs(q - 0.6) < 0.05 || Math.abs(q - 0.8) < 0.05)
-      return { label: "Recommended", color: "#0fdd23" };
+      return { label: "Recommended", color: "#3fc97f" };
     if (Math.abs(q - 0.2) < 0.05 || Math.abs(q - 0.4) < 0.05)
-      return { label: "Moderate", color: "#fadb14" };
+      return { label: "Moderate", color: "#f3d35f" };
     if (Math.abs(q - 1) < 0.05)
-      return { label: "Not Recommended", color: "#ff4d4f" };
+      return { label: "Not Recommended", color: "#e14f42" };
     return { label: "", color: "#000" };
   };
 
@@ -47,14 +45,13 @@ const QualitySlider = ({
           step={20}
           onChange={handleRangeChange}
         />
-        {/* Labels under slider */}
         <div className="mt-1 flex justify-between text-sm">
-          <span className="text-[#ff4d4f]">Low</span>
-          <span className="text-[#fadb14]">Fair</span>
-          <span className="text-[#fadb14]">Okay</span>
-          <span className="text-[#0fdd23]">Good</span>
-          <span className="text-[#0fdd23]">High</span>
-          <span className="text-[#ff4d4f]">Max</span>
+          <span className="text-destructive">Low</span>
+          <span className="text-warning">Fair</span>
+          <span className="text-warning">Okay</span>
+          <span className="text-success">Good</span>
+          <span className="text-success">High</span>
+          <span className="text-destructive">Max</span>
         </div>
       </div>
     </div>
