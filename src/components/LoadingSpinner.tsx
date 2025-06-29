@@ -19,7 +19,7 @@ const LoadingSpinner = () => {
           />
         </svg>
       </div>
-      <span className="mt-1 text-base">Preparing your images.</span>
+      <span className="mt-1 text-base">Compressing your images.</span>
     </li>
   );
 };

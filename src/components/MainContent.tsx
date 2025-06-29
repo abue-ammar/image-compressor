@@ -1,13 +1,13 @@
 import Compressor from "compressorjs";
 import JSZip from "jszip";
-import { ImageIcon } from "lucide-react";
+import { Download, ImageIcon, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PhotoProvider } from "react-photo-view";
 import ImageInfoCard from "./ImageInfoCard";
 import Intro from "./Intro";
 import LoadingSpinner from "./LoadingSpinner";
-import ProgressBar from "./ProgressBar";
 import QualitySlider from "./QualitySlider";
+import { Button } from "./ui/button";
 
 type CompressedImage = {
   fileName: string;
@@ -201,32 +201,14 @@ const MainContent = () => {
         </label>
         <div className="mt-4 flex justify-end">
           {compressedImages?.length > 0 && (
-            <div className="mr-2">
-              <button
-                className="inline-flex items-center rounded-md bg-black px-3 py-1 text-sm font-medium text-white hover:bg-black/80"
-                onClick={handleDownload}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  className="mr-1 size-4"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                <span className="mt-1">Download All Images (ZIP)</span>
-              </button>
-            </div>
+            <Button variant={"default"} onClick={handleDownload}>
+              <Download />
+              Download All Images (ZIP)
+            </Button>
           )}
           {filelist?.length > 0 && (
-            <button
-              className="inline-flex items-center rounded-md bg-[#ff4d4f] px-3 py-1 text-sm font-medium text-white hover:bg-[#ff4d4f]/85"
+            <Button
+              variant={"destructive"}
               onClick={() => {
                 setValue(60);
                 setCompressProgress(0);
@@ -234,30 +216,11 @@ const MainContent = () => {
                 setFilelist([]);
               }}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="mr-1 size-4"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-                />
-              </svg>
-
-              <span className="mt-1">Reset</span>
-            </button>
+              <Trash2 />
+              Reset
+            </Button>
           )}
         </div>
-        {compressProgress > 0 && (
-          <div className="pt-2">
-            <ProgressBar width={compressProgress} />
-          </div>
-        )}
 
         {loading ? (
           <div className="flex items-center justify-center py-2">
