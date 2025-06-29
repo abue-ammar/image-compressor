@@ -1,4 +1,4 @@
-const LoadingSpinner = () => {
+const LoadingSpinner = ({ compressProgress }: { compressProgress: number }) => {
   return (
     <li className="flex items-center">
       <div role="status">
@@ -19,7 +19,11 @@ const LoadingSpinner = () => {
           />
         </svg>
       </div>
-      <span className="mt-1 text-base">Preparing your images.</span>
+      <span className="mt-1 text-base">
+        {compressProgress === 100
+          ? `Compressed ${compressProgress}%`
+          : `Compressing... ${compressProgress}%`}
+      </span>
     </li>
   );
 };

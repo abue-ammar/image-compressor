@@ -5,21 +5,37 @@ const QualitySlider = ({
   value: number;
   handleRangeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
+  const quality = Math.round((value / 100) * 10) / 10;
+
+  const getQualityInfo = (q: number) => {
+    if (q === 0) return { label: "Not Recommended", color: "#e14f42" };
+    if (q === 0.2 || q === 0.4) return { label: "Moderate", color: "#f3d35f" };
+    if (q === 0.6 || q === 0.8)
+      return { label: "Recommended", color: "#3fc97f" };
+    if (q === 1) return { label: "Not Recommended", color: "#e14f42" };
+    if (Math.abs(q - 0.6) < 0.05 || Math.abs(q - 0.8) < 0.05)
+      return { label: "Recommended", color: "#3fc97f" };
+    if (Math.abs(q - 0.2) < 0.05 || Math.abs(q - 0.4) < 0.05)
+      return { label: "Moderate", color: "#f3d35f" };
+    if (Math.abs(q - 1) < 0.05)
+      return { label: "Not Recommended", color: "#e14f42" };
+    return { label: "", color: "#000" };
+  };
+
+  const { label, color } = getQualityInfo(quality);
+
   return (
-    <div>
-      <label className="font-medium md:text-lg md:font-semibold">
-        Image Quality: {value / 100}{" "}
-        {value / 100 == 0 ? (
-          <span className="text-[#ff4d4f]">(Not Recommended)</span>
-        ) : value / 100 == 0.2 || value / 100 == 0.4 ? (
-          <span className="text-[#fadb14]">(Modarate)</span>
-        ) : value / 100 == 0.6 || value / 100 == 0.8 ? (
-          <span className="text-[#0fdd23]">(Recommended)</span>
-        ) : (
-          <span className="text-[#ff4d4f]">(Not Recommended)</span>
-        )}
+    <div className="w-full">
+      <label className="block font-medium md:text-lg md:font-semibold">
+        Image Quality: {value}%
+        <span style={{ color }} className="ml-1">
+          ({label})
+        </span>
       </label>
-      <div className="relative -mt-1.5 mb-6">
+      <p className="text-muted-foreground text-sm">
+        Higher quality = larger file size
+      </p>
+      <div className="relative mb-4">
         <input
           type="range"
           className="range range-sm h-1 w-full cursor-pointer appearance-none rounded-lg bg-gray-200"
@@ -29,24 +45,14 @@ const QualitySlider = ({
           step={20}
           onChange={handleRangeChange}
         />
-        <span className="absolute start-0 -bottom-5 text-sm text-[#ff4d4f]">
-          0
-        </span>
-        <span className="absolute start-[20%] -bottom-5 -translate-x-1/2 text-sm text-[#fadb14]">
-          0.2
-        </span>
-        <span className="absolute start-[40.0%] -bottom-5 -translate-x-1/2 text-sm text-[#fadb14]">
-          0.4
-        </span>
-        <span className="absolute start-[60%] -bottom-5 -translate-x-1/2 text-sm text-[#0fdd23]">
-          0.6
-        </span>
-        <span className="absolute start-[80%] -bottom-5 -translate-x-1/2 text-sm text-[#0fdd23]">
-          0.8
-        </span>
-        <span className="absolute end-0 -bottom-5 text-sm text-[#ff4d4f]">
-          1
-        </span>
+        <div className="mt-1 flex justify-between text-sm">
+          <span className="text-destructive">Low</span>
+          <span className="text-warning">Fair</span>
+          <span className="text-warning">Okay</span>
+          <span className="text-success">Good</span>
+          <span className="text-success">High</span>
+          <span className="text-destructive">Max</span>
+        </div>
       </div>
     </div>
   );
