@@ -164,7 +164,7 @@ const MainContent = () => {
       <QualitySlider value={value} handleRangeChange={handleRangeChange} />
       <div className="">
         <label
-          className={`border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-40 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px] ${isDragActive ? "border-blue-400 shadow-2xl duration-500" : ""}`}
+          className={`border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-40 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-all duration-200 ease-in not-data-[files]:justify-center has-[input:focus]:ring-[3px] ${isDragActive ? "scale-101 border-gray-600 shadow-lg" : ""}`}
           onDrop={handleImageDrop}
           onDragOver={handleDragOver}
           onDragEnter={handleDragEnter}
