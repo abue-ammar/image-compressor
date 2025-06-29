@@ -35,7 +35,7 @@ const QualitySlider = ({
       <p className="text-muted-foreground text-sm">
         Higher quality = larger file size
       </p>
-      <div className="relative mb-6">
+      <div className="relative mb-4">
         <input
           type="range"
           className="range range-sm h-1 w-full cursor-pointer appearance-none rounded-lg bg-gray-200"

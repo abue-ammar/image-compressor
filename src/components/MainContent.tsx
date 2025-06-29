@@ -199,11 +199,11 @@ const MainContent = () => {
             </p>
           </div>
         </label>
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex justify-end gap-x-4">
           {compressedImages?.length > 0 && (
             <Button variant={"default"} onClick={handleDownload}>
               <Download />
-              Download All Images (ZIP)
+              Download All (ZIP)
             </Button>
           )}
           {filelist?.length > 0 && (
@@ -221,16 +221,16 @@ const MainContent = () => {
             </Button>
           )}
         </div>
-
+        {/* TODO: ADD HEADER FOR IMAGES LIST */}
         {loading ? (
           <div className="flex items-center justify-center py-2">
-            <LoadingSpinner />
+            <LoadingSpinner compressProgress={compressProgress} />
           </div>
         ) : (
           <>
             <PhotoProvider>
               {compressedImages?.length > 0 && (
-                <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 md:py-8 lg:grid-cols-3">
                   {compressedImages?.map((image, i) => (
                     <ImageInfoCard
                       key={i}
