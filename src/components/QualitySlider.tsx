@@ -5,21 +5,31 @@ const QualitySlider = ({
   value: number;
   handleRangeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
+  const quality = Math.round(value / 20) * 0.2;
+
+  const getQualityInfo = (q: number) => {
+    if (q === 0) return { label: "Not Recommended", color: "#ff4d4f" };
+    if (q === 0.2 || q === 0.4) return { label: "Moderate", color: "#fadb14" };
+    if (q === 0.6 || q === 0.8)
+      return { label: "Recommended", color: "#0fdd23" };
+    if (q === 1) return { label: "Not Recommended", color: "#ff4d4f" };
+    return { label: "", color: "#000" };
+  };
+
+  const { label, color } = getQualityInfo(quality);
+
   return (
-    <div>
-      <label className="font-medium md:text-lg md:font-semibold">
-        Image Quality: {value / 100}{" "}
-        {value / 100 == 0 ? (
-          <span className="text-[#ff4d4f]">(Not Recommended)</span>
-        ) : value / 100 == 0.2 || value / 100 == 0.4 ? (
-          <span className="text-[#fadb14]">(Modarate)</span>
-        ) : value / 100 == 0.6 || value / 100 == 0.8 ? (
-          <span className="text-[#0fdd23]">(Recommended)</span>
-        ) : (
-          <span className="text-[#ff4d4f]">(Not Recommended)</span>
-        )}
+    <div className="w-full">
+      <label className="block font-medium md:text-lg md:font-semibold">
+        Image Quality: {(value / 100).toFixed(1)}{" "}
+        <span style={{ color }} className="ml-1">
+          ({label})
+        </span>
       </label>
-      <div className="relative -mt-1.5 mb-6">
+      <p className="text-muted-foreground text-sm">
+        Higher quality = larger file size
+      </p>
+      <div className="relative mb-6">
         <input
           type="range"
           className="range range-sm h-1 w-full cursor-pointer appearance-none rounded-lg bg-gray-200"
@@ -29,24 +39,15 @@ const QualitySlider = ({
           step={20}
           onChange={handleRangeChange}
         />
-        <span className="absolute start-0 -bottom-5 text-sm text-[#ff4d4f]">
-          0
-        </span>
-        <span className="absolute start-[20%] -bottom-5 -translate-x-1/2 text-sm text-[#fadb14]">
-          0.2
-        </span>
-        <span className="absolute start-[40.0%] -bottom-5 -translate-x-1/2 text-sm text-[#fadb14]">
-          0.4
-        </span>
-        <span className="absolute start-[60%] -bottom-5 -translate-x-1/2 text-sm text-[#0fdd23]">
-          0.6
-        </span>
-        <span className="absolute start-[80%] -bottom-5 -translate-x-1/2 text-sm text-[#0fdd23]">
-          0.8
-        </span>
-        <span className="absolute end-0 -bottom-5 text-sm text-[#ff4d4f]">
-          1
-        </span>
+        {/* Labels under slider */}
+        <div className="mt-1 flex justify-between text-sm">
+          <span className="text-[#ff4d4f]">Low</span>
+          <span className="text-[#fadb14]">Fair</span>
+          <span className="text-[#fadb14]">Okay</span>
+          <span className="text-[#0fdd23]">Good</span>
+          <span className="text-[#0fdd23]">High</span>
+          <span className="text-[#ff4d4f]">Max</span>
+        </div>
       </div>
     </div>
   );
