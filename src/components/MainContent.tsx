@@ -221,7 +221,7 @@ const MainContent = () => {
             </Button>
           )}
         </div>
-        {/* TODO: ADD HEADER FOR IMAGES*/}
+        {/* TODO: ADD HEADER FOR IMAGES LIST*/}
         {loading ? (
           <div className="flex items-center justify-center py-2">
             <LoadingSpinner compressProgress={compressProgress} />
