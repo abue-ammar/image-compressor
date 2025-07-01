@@ -51,14 +51,14 @@ html {
 .range::-webkit-slider-thumb {
   -webkit-appearance: none !important;
   border-radius: 100%;
-  background-color: black;
+  background-color: var(--primary);
   height: 16px;
   width: 16px;
   cursor: pointer;
 }
 .range::-ms-thumb {
   border-radius: 100%;
-  background-color: black;
+  background-color: var(--primary);
   height: 18px;
   width: 18px;
   border: none;
@@ -69,7 +69,7 @@ html {
   width: 16px;
   border: none;
   background: none;
-  background-color: black;
+  background-color: var(--primary);
 }
 
 @theme inline {
