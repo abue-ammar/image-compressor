@@ -1,6 +1,6 @@
 import Compressor from "compressorjs";
 import JSZip from "jszip";
-import { Download, ImageIcon, RefreshCcw } from "lucide-react";
+import { Download, ImageIcon, Inbox, RefreshCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PhotoProvider } from "react-photo-view";
 
@@ -168,7 +168,7 @@ const ImageCompressor = () => {
       />
       <div className="">
         <label
-          className={`border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-40 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-all duration-200 ease-in not-data-[files]:justify-center has-[input:focus]:ring-[3px] ${isDragActive ? "scale-101 border-gray-600 shadow-lg" : ""}`}
+          className={`border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-40 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-all duration-300 ease-in not-data-[files]:justify-center has-[input:focus]:ring-[3px] ${isDragActive ? "scale-101 border-gray-600 shadow-lg" : ""}`}
           onDrop={handleImageDrop}
           onDragOver={handleDragOver}
           onDragEnter={handleDragEnter}
@@ -226,16 +226,16 @@ const ImageCompressor = () => {
           )}
         </div>
         {loading ? (
-          <div className="flex items-center justify-center py-2">
+          <div className="flex flex-col items-center justify-center py-8">
             <LoadingSpinner compressProgress={compressProgress} />
           </div>
         ) : (
-          <PhotoProvider>
-            {compressedImages?.length > 0 && (
-              <div>
-                <h2 className="text-xl font-semibold">Compressed Images</h2>
+          <div>
+            <h2 className="mb-2 text-xl font-semibold">Compressed Images</h2>
+            {compressedImages?.length > 0 ? (
+              <PhotoProvider>
                 <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-3">
-                  {compressedImages?.map((image, i) => (
+                  {compressedImages.map((image, i) => (
                     <ImagePreviewCard
                       key={i}
                       onSingleFileDownload={onSingleFileDownload}
@@ -243,9 +243,20 @@ const ImageCompressor = () => {
                     />
                   ))}
                 </div>
+              </PhotoProvider>
+            ) : (
+              <div className="text-muted-foreground flex flex-col items-center justify-center py-8 text-center">
+                <Inbox className="size-14" strokeWidth={1.5} />
+                <h3 className="mb-1 text-lg font-semibold">
+                  No Compressed Images
+                </h3>
+                <p className="max-w-xs text-sm">
+                  Upload images and compress them to see your results here. Your
+                  compressed images will appear in this section.
+                </p>
               </div>
             )}
-          </PhotoProvider>
+          </div>
         )}
       </div>
     </div>
