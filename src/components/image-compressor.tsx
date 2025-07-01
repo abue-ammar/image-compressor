@@ -1,24 +1,25 @@
 import Compressor from "compressorjs";
 import JSZip from "jszip";
-import { Download, ImageIcon, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Download, ImageIcon, Inbox, RefreshCcw } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { PhotoProvider } from "react-photo-view";
-import ImageInfoCard from "./ImageInfoCard";
-import Intro from "./Intro";
-import LoadingSpinner from "./LoadingSpinner";
-import QualitySlider from "./QualitySlider";
+
+import ImagePreviewCard from "./image-preview-card";
+import ImageQualitySlider from "./image-quality-slider";
+import Intro from "./intro";
+import LoadingSpinner from "./loading-spinner";
 import { Button } from "./ui/button";
 
-type CompressedImage = {
+interface CompressedImage {
   fileName: string;
-  originalSize: number;
-  compressedSize: number;
+  originalImageSize: number;
+  compressedImageSize: number;
   fileType: string;
   content: string;
-  compressRate: string;
-};
+  compressionPercentage: string;
+}
 
-const MainContent = () => {
+const ImageCompressor = () => {
   const [compressedImages, setCompressedImages] = useState<CompressedImage[]>(
     []
   );
@@ -28,17 +29,11 @@ const MainContent = () => {
   const [value, setValue] = useState<number>(60); // Initial value
   const [filelist, setFilelist] = useState<FileList | File[]>([]);
   const [compressProgress, setCompressProgress] = useState<number>(0);
-
-  const handleRangeChange = async (
+  const dropAreaRef = useRef<HTMLLabelElement>(null);
+  const onImageQualityChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setValue(parseInt(event.target.value, 10));
-  };
-
-  const handleImageDrop = async (e: React.DragEvent<HTMLLabelElement>) => {
-    e.preventDefault();
-    setIsDragActive(false);
-    setFilelist(e.dataTransfer.files);
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,17 +61,17 @@ const MainContent = () => {
       const compressedImg = await compressImage(file);
       const base64Data = (compressedImg as string).split(",")[1];
       const binaryData = atob(base64Data);
-      const compressedDataSize = binaryData.length;
-      const rate = ((file?.size - compressedDataSize) / file.size) * 100;
+      const compressedImageSize = binaryData.length;
+      const rate = ((compressedImageSize - file.size) / file.size) * 100;
       const dotIndex = file?.name?.lastIndexOf(".");
       compressedImgs.push({
         fileName:
           "compressed_" + file?.name?.slice(0, 8) + file?.name?.slice(dotIndex),
-        originalSize: file.size,
-        compressedSize: compressedDataSize,
+        originalImageSize: file.size,
+        compressedImageSize: compressedImageSize,
         fileType: file.type,
         content: compressedImg as string,
-        compressRate: rate.toFixed(2),
+        compressionPercentage: rate.toFixed(2),
       });
       const response = await fetch(compressedImg as string);
       const blob = await response.blob();
@@ -122,14 +117,31 @@ const MainContent = () => {
 
   const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
+    e.stopPropagation();
+    if (!isDragActive) setIsDragActive(true);
   };
 
-  const handleDragEnter = () => {
+  const handleDragEnter = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIsDragActive(true);
   };
 
-  const handleDragLeave = () => {
+  const handleDragLeave = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Check if we're leaving the drop area entirely
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setIsDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIsDragActive(false);
+    setFilelist(e.dataTransfer.files);
   };
 
   const handleDownload = () => {
@@ -143,7 +155,7 @@ const MainContent = () => {
     }
   };
 
-  const handleSingleDownload = (file: string) => {
+  const onSingleFileDownload = (file: string) => {
     const downloadLink = document.createElement("a");
     downloadLink.href = file;
     const regexResult = /^data:(.+?)(?:;(?:.+?))?,/.exec(file);
@@ -161,11 +173,19 @@ const MainContent = () => {
   return (
     <div className="container mx-auto px-4">
       <Intro />
-      <QualitySlider value={value} handleRangeChange={handleRangeChange} />
+      <ImageQualitySlider
+        value={value}
+        onImageQualityChange={onImageQualityChange}
+      />
       <div className="">
         <label
-          className={`border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-40 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-all duration-200 ease-in not-data-[files]:justify-center has-[input:focus]:ring-[3px] ${isDragActive ? "scale-101 border-gray-600 shadow-lg" : ""}`}
-          onDrop={handleImageDrop}
+          ref={dropAreaRef}
+          className={`relative flex min-h-40 flex-col items-center overflow-hidden rounded-xl border-2 border-dashed p-4 transition-all duration-200 ease-in-out ${
+            isDragActive
+              ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+              : "border-gray-300 dark:border-gray-600"
+          } ${compressedImages.length === 0 ? "justify-center" : ""}`}
+          onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
@@ -182,14 +202,13 @@ const MainContent = () => {
             aria-label="Upload image file"
           />
           <div className="flex flex-col items-center justify-center px-4 py-3 text-center">
-            <div
-              className="bg-background mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border"
-              aria-hidden="true"
-            >
+            <div className="mb-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border bg-white dark:bg-gray-800">
               <ImageIcon className="size-4 opacity-60" />
             </div>
             <p className="mb-1.5 text-base font-medium">
-              Drop your images here
+              {isDragActive
+                ? "Drop your images here"
+                : "Drag & drop images here"}
             </p>
             <p className="text-muted-foreground text-sm">
               JPG, JPEG, PNG, WEBP
@@ -199,53 +218,64 @@ const MainContent = () => {
             </p>
           </div>
         </label>
-        <div className="mt-4 flex justify-end gap-x-4">
-          {compressedImages?.length > 0 && (
-            <Button variant={"default"} onClick={handleDownload}>
-              <Download />
-              Download All (ZIP)
-            </Button>
-          )}
-          {filelist?.length > 0 && (
-            <Button
-              variant={"destructive"}
-              onClick={() => {
-                setValue(60);
-                setCompressProgress(0);
-                setCompressedImages([]);
-                setFilelist([]);
-              }}
-            >
-              <Trash2 />
-              Reset
-            </Button>
+        <div className="my-4 flex justify-end gap-x-4">
+          {compressedImages?.length > 0 && filelist?.length > 0 && (
+            <>
+              <Button variant={"default"} onClick={handleDownload}>
+                <Download />
+                Download All (ZIP)
+              </Button>
+              <Button
+                variant={"destructive"}
+                onClick={() => {
+                  setValue(60);
+                  setCompressProgress(0);
+                  setCompressedImages([]);
+                  setFilelist([]);
+                }}
+              >
+                <RefreshCcw />
+                Reset
+              </Button>
+            </>
           )}
         </div>
-        {/* TODO: ADD HEADER FOR IMAGES LIST */}
         {loading ? (
-          <div className="flex items-center justify-center py-2">
+          <div className="flex flex-col items-center justify-center py-8">
             <LoadingSpinner compressProgress={compressProgress} />
           </div>
         ) : (
-          <>
-            <PhotoProvider>
-              {compressedImages?.length > 0 && (
-                <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 md:py-8 lg:grid-cols-3">
-                  {compressedImages?.map((image, i) => (
-                    <ImageInfoCard
+          <div>
+            <h2 className="mb-2 text-xl font-semibold">Compressed Images</h2>
+            {compressedImages?.length > 0 ? (
+              <PhotoProvider>
+                <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-3">
+                  {compressedImages.map((image, i) => (
+                    <ImagePreviewCard
                       key={i}
-                      handleSingleDownload={handleSingleDownload}
+                      onSingleFileDownload={onSingleFileDownload}
                       {...image}
                     />
                   ))}
                 </div>
-              )}
-            </PhotoProvider>
-          </>
+              </PhotoProvider>
+            ) : (
+              <div className="text-muted-foreground flex flex-col items-center justify-center py-8 text-center">
+                <Inbox className="size-14" strokeWidth={1.5} />
+                <h3 className="mb-1 text-lg font-semibold">
+                  No Compressed Images
+                </h3>
+                <p className="max-w-xs text-sm">
+                  Upload images and compress them to see your results here. Your
+                  compressed images will appear in this section.
+                </p>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>
   );
 };
 
-export default MainContent;
+export default ImageCompressor;

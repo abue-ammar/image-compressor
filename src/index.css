@@ -3,6 +3,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -23,7 +27,7 @@
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: oklch(0.6271 0.2485 27.19);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
@@ -40,21 +44,21 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --success: oklch(72.3% 0.219 149.579);
-  --warning: oklch(79.5% 0.184 86.047);
+  --success: oklch(0.6895 0.1865 157.43);
+  --warning: oklch(0.8231 0.1925 94.17);
 }
 
 .range::-webkit-slider-thumb {
   -webkit-appearance: none !important;
   border-radius: 100%;
-  background-color: black;
+  background-color: var(--primary);
   height: 16px;
   width: 16px;
   cursor: pointer;
 }
 .range::-ms-thumb {
   border-radius: 100%;
-  background-color: black;
+  background-color: var(--primary);
   height: 18px;
   width: 18px;
   border: none;
@@ -65,7 +69,7 @@
   width: 16px;
   border: none;
   background: none;
-  background-color: black;
+  background-color: var(--primary);
 }
 
 @theme inline {
@@ -123,7 +127,7 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
+  --destructive: oklch(0.6271 0.2485 27.19);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
@@ -140,8 +144,8 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-  --success: oklch(72.3% 0.219 149.579);
-  --warning: oklch(79.5% 0.184 86.047);
+  --success: oklch(0.6895 0.1865 157.43);
+  --warning: oklch(0.8231 0.1925 94.17);
 }
 
 @layer base {

@@ -1,13 +1,13 @@
-const QualitySlider = ({
+const ImageQualitySlider = ({
   value,
-  handleRangeChange,
+  onImageQualityChange,
 }: {
   value: number;
-  handleRangeChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onImageQualityChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
   const quality = Math.round((value / 100) * 10) / 10;
 
-  const getQualityInfo = (q: number) => {
+  const getImageQualityInfo = (q: number) => {
     if (q === 0) return { label: "Not Recommended", color: "#e14f42" };
     if (q === 0.2 || q === 0.4) return { label: "Moderate", color: "#f3d35f" };
     if (q === 0.6 || q === 0.8)
@@ -22,11 +22,11 @@ const QualitySlider = ({
     return { label: "", color: "#000" };
   };
 
-  const { label, color } = getQualityInfo(quality);
+  const { label, color } = getImageQualityInfo(quality);
 
   return (
     <div className="w-full">
-      <label className="block font-medium md:text-lg md:font-semibold">
+      <label className="block text-xl font-semibold">
         Image Quality: {value}%
         <span style={{ color }} className="ml-1">
           ({label})
@@ -43,7 +43,7 @@ const QualitySlider = ({
           min={0}
           max={100}
           step={20}
-          onChange={handleRangeChange}
+          onChange={onImageQualityChange}
         />
         <div className="mt-1 flex justify-between text-sm">
           <span className="text-destructive">Low</span>
@@ -58,4 +58,4 @@ const QualitySlider = ({
   );
 };
 
-export default QualitySlider;
+export default ImageQualitySlider;

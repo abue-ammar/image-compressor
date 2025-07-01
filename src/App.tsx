@@ -1,16 +1,19 @@
-import Footer from "./components/Footer";
-import Header from "./components/Header";
-import MainContent from "./components/MainContent";
+import Footer from "./components/footer";
+import Header from "./components/header";
+import ImageCompressor from "./components/image-compressor";
+import { ThemeProvider } from "./components/theme-provider";
 
 function App() {
   return (
-    <div className="relative flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1">
-        <MainContent />
-      </main>
-      <Footer />
-    </div>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <div className="relative flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-1">
+          <ImageCompressor />
+        </main>
+        <Footer />
+      </div>
+    </ThemeProvider>
   );
 }
 
