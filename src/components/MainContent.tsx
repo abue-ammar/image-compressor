@@ -67,7 +67,7 @@ const MainContent = () => {
       const base64Data = (compressedImg as string).split(",")[1];
       const binaryData = atob(base64Data);
       const compressedDataSize = binaryData.length;
-      const rate = ((file?.size - compressedDataSize) / file.size) * 100;
+      const rate = ((compressedDataSize - file.size) / file.size) * 100;
       const dotIndex = file?.name?.lastIndexOf(".");
       compressedImgs.push({
         fileName:
