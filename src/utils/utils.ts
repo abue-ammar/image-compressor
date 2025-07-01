@@ -1,4 +1,4 @@
-export const formatFileSize = (bytes: number) => {
+export const formatBytes = (bytes: number) => {
   const kilobyte = 1024;
   const megabyte = kilobyte * 1024;
   const gigabyte = megabyte * 1024;

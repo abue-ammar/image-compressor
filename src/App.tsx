@@ -1,13 +1,13 @@
-import Footer from "./components/Footer";
-import Header from "./components/Header";
-import MainContent from "./components/MainContent";
+import Footer from "./components/footer";
+import Header from "./components/header";
+import ImageCompressor from "./components/image-compressor";
 
 function App() {
   return (
     <div className="relative flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <MainContent />
+        <ImageCompressor />
       </main>
       <Footer />
     </div>

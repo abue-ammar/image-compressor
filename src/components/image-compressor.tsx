@@ -3,22 +3,23 @@ import JSZip from "jszip";
 import { Download, ImageIcon, RefreshCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PhotoProvider } from "react-photo-view";
-import ImageInfoCard from "./ImageInfoCard";
-import Intro from "./Intro";
-import LoadingSpinner from "./LoadingSpinner";
-import QualitySlider from "./QualitySlider";
+
+import ImagePreviewCard from "./image-preview-card";
+import ImageQualitySlider from "./image-quality-slider";
+import Intro from "./intro";
+import LoadingSpinner from "./loading-spinner";
 import { Button } from "./ui/button";
 
-type CompressedImage = {
+interface CompressedImage {
   fileName: string;
-  originalSize: number;
-  compressedSize: number;
+  originalImageSize: number;
+  compressedImageSize: number;
   fileType: string;
   content: string;
-  compressRate: string;
-};
+  compressionPercentage: string;
+}
 
-const MainContent = () => {
+const ImageCompressor = () => {
   const [compressedImages, setCompressedImages] = useState<CompressedImage[]>(
     []
   );
@@ -29,7 +30,7 @@ const MainContent = () => {
   const [filelist, setFilelist] = useState<FileList | File[]>([]);
   const [compressProgress, setCompressProgress] = useState<number>(0);
 
-  const handleRangeChange = async (
+  const onImageQualityChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setValue(parseInt(event.target.value, 10));
@@ -66,17 +67,17 @@ const MainContent = () => {
       const compressedImg = await compressImage(file);
       const base64Data = (compressedImg as string).split(",")[1];
       const binaryData = atob(base64Data);
-      const compressedDataSize = binaryData.length;
-      const rate = ((compressedDataSize - file.size) / file.size) * 100;
+      const compressedImageSize = binaryData.length;
+      const rate = ((compressedImageSize - file.size) / file.size) * 100;
       const dotIndex = file?.name?.lastIndexOf(".");
       compressedImgs.push({
         fileName:
           "compressed_" + file?.name?.slice(0, 8) + file?.name?.slice(dotIndex),
-        originalSize: file.size,
-        compressedSize: compressedDataSize,
+        originalImageSize: file.size,
+        compressedImageSize: compressedImageSize,
         fileType: file.type,
         content: compressedImg as string,
-        compressRate: rate.toFixed(2),
+        compressionPercentage: rate.toFixed(2),
       });
       const response = await fetch(compressedImg as string);
       const blob = await response.blob();
@@ -143,7 +144,7 @@ const MainContent = () => {
     }
   };
 
-  const handleSingleDownload = (file: string) => {
+  const onSingleFileDownload = (file: string) => {
     const downloadLink = document.createElement("a");
     downloadLink.href = file;
     const regexResult = /^data:(.+?)(?:;(?:.+?))?,/.exec(file);
@@ -161,7 +162,10 @@ const MainContent = () => {
   return (
     <div className="container mx-auto px-4">
       <Intro />
-      <QualitySlider value={value} handleRangeChange={handleRangeChange} />
+      <ImageQualitySlider
+        value={value}
+        onImageQualityChange={onImageQualityChange}
+      />
       <div className="">
         <label
           className={`border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-40 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-all duration-200 ease-in not-data-[files]:justify-center has-[input:focus]:ring-[3px] ${isDragActive ? "scale-101 border-gray-600 shadow-lg" : ""}`}
@@ -232,9 +236,9 @@ const MainContent = () => {
                 <h2 className="text-xl font-semibold">Compressed Images</h2>
                 <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-3">
                   {compressedImages?.map((image, i) => (
-                    <ImageInfoCard
+                    <ImagePreviewCard
                       key={i}
-                      handleSingleDownload={handleSingleDownload}
+                      onSingleFileDownload={onSingleFileDownload}
                       {...image}
                     />
                   ))}
@@ -248,4 +252,4 @@ const MainContent = () => {
   );
 };
 
-export default MainContent;
+export default ImageCompressor;
