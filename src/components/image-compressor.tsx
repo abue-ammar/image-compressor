@@ -1,7 +1,7 @@
 import Compressor from "compressorjs";
 import JSZip from "jszip";
 import { Download, ImageIcon, Inbox, RefreshCcw } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PhotoProvider } from "react-photo-view";
 
 import ImagePreviewCard from "./image-preview-card";
@@ -29,17 +29,11 @@ const ImageCompressor = () => {
   const [value, setValue] = useState<number>(60); // Initial value
   const [filelist, setFilelist] = useState<FileList | File[]>([]);
   const [compressProgress, setCompressProgress] = useState<number>(0);
-
+  const dropAreaRef = useRef<HTMLLabelElement>(null);
   const onImageQualityChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setValue(parseInt(event.target.value, 10));
-  };
-
-  const handleImageDrop = async (e: React.DragEvent<HTMLLabelElement>) => {
-    e.preventDefault();
-    setIsDragActive(false);
-    setFilelist(e.dataTransfer.files);
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,14 +117,31 @@ const ImageCompressor = () => {
 
   const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
+    e.stopPropagation();
+    if (!isDragActive) setIsDragActive(true);
   };
 
-  const handleDragEnter = () => {
+  const handleDragEnter = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIsDragActive(true);
   };
 
-  const handleDragLeave = () => {
+  const handleDragLeave = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Check if we're leaving the drop area entirely
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setIsDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIsDragActive(false);
+    setFilelist(e.dataTransfer.files);
   };
 
   const handleDownload = () => {
@@ -168,8 +179,13 @@ const ImageCompressor = () => {
       />
       <div className="">
         <label
-          className={`border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-40 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-all duration-300 ease-in not-data-[files]:justify-center has-[input:focus]:ring-[3px] ${isDragActive ? "scale-101 border-gray-600 shadow-lg" : ""}`}
-          onDrop={handleImageDrop}
+          ref={dropAreaRef}
+          className={`relative flex min-h-40 flex-col items-center overflow-hidden rounded-xl border-2 border-dashed p-4 transition-all duration-200 ease-in-out ${
+            isDragActive
+              ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+              : "border-gray-300 dark:border-gray-600"
+          } ${compressedImages.length === 0 ? "justify-center" : ""}`}
+          onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
@@ -186,14 +202,13 @@ const ImageCompressor = () => {
             aria-label="Upload image file"
           />
           <div className="flex flex-col items-center justify-center px-4 py-3 text-center">
-            <div
-              className="bg-background mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border"
-              aria-hidden="true"
-            >
+            <div className="mb-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border bg-white dark:bg-gray-800">
               <ImageIcon className="size-4 opacity-60" />
             </div>
             <p className="mb-1.5 text-base font-medium">
-              Drop your images here
+              {isDragActive
+                ? "Drop your images here"
+                : "Drag & drop images here"}
             </p>
             <p className="text-muted-foreground text-sm">
               JPG, JPEG, PNG, WEBP
