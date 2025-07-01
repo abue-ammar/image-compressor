@@ -5,7 +5,7 @@ import { ThemeProvider } from "./components/theme-provider";
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <div className="relative flex min-h-screen flex-col">
         <Header />
         <main className="flex-1">
