@@ -30,6 +30,7 @@ const ImageCompressor = () => {
   const [filelist, setFilelist] = useState<FileList | File[]>([]);
   const [compressProgress, setCompressProgress] = useState<number>(0);
   const dropAreaRef = useRef<HTMLLabelElement>(null);
+  const compressedImagesRef = useRef<HTMLDivElement>(null);
   const onImageQualityChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -39,6 +40,8 @@ const ImageCompressor = () => {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     if (e.target.files) {
+      setCompressedImages([]);
+      setCompressProgress(0);
       setFilelist(e.target.files);
     }
   };
@@ -141,6 +144,8 @@ const ImageCompressor = () => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragActive(false);
+    setCompressedImages([]);
+    setCompressProgress(0);
     setFilelist(e.dataTransfer.files);
   };
 
@@ -169,6 +174,19 @@ const ImageCompressor = () => {
     downloadLink.click();
     document.body.removeChild(downloadLink);
   };
+
+  // Add scroll effect when compressed images are available
+  useEffect(() => {
+    if (compressedImages.length > 0 && compressedImagesRef.current) {
+      setTimeout(() => {
+        compressedImagesRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest",
+        });
+      }, 300);
+    }
+  }, [compressedImages.length]);
 
   return (
     <div className="container mx-auto px-4">
@@ -245,7 +263,7 @@ const ImageCompressor = () => {
             <LoadingSpinner compressProgress={compressProgress} />
           </div>
         ) : (
-          <div>
+          <div ref={compressedImagesRef}>
             <h2 className="mb-2 text-xl font-semibold">Compressed Images</h2>
             {compressedImages?.length > 0 ? (
               <PhotoProvider>
