@@ -2,6 +2,7 @@ import Footer from "./components/footer";
 import Header from "./components/header";
 import ImageCompressor from "./components/image-compressor";
 import { ThemeProvider } from "./components/theme-provider";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Header />
         <main className="flex-1">
           <ImageCompressor />
+          <Toaster />
         </main>
         <Footer />
       </div>
