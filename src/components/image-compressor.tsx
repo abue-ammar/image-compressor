@@ -3,6 +3,7 @@ import JSZip from "jszip";
 import { Download, ImageIcon, Inbox, RefreshCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { PhotoProvider } from "react-photo-view";
+import { toast } from "sonner";
 
 import ImagePreviewCard from "./image-preview-card";
 import ImageQualitySlider from "./image-quality-slider";
@@ -31,6 +32,45 @@ const ImageCompressor = () => {
   const [compressProgress, setCompressProgress] = useState<number>(0);
   const dropAreaRef = useRef<HTMLLabelElement>(null);
   const compressedImagesRef = useRef<HTMLDivElement>(null);
+
+  // Allowed image formats
+  const allowedFormats = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
+  // Validate file type
+  const validateFileType = (file: File): boolean => {
+    return allowedFormats.includes(file.type.toLowerCase());
+  };
+
+  // Filter valid files and show error for invalid ones
+  const filterValidFiles = (files: FileList | File[]): File[] => {
+    const filesArray = Array.from(files);
+    const validFiles: File[] = [];
+    const invalidFiles: File[] = [];
+
+    filesArray.forEach((file) => {
+      if (validateFileType(file)) {
+        validFiles.push(file);
+      } else {
+        invalidFiles.push(file);
+      }
+    });
+
+    // Show error toast for invalid files
+    if (invalidFiles.length > 0) {
+      const invalidFileNames = invalidFiles.map((file) => file.name).join(", ");
+      toast.error(
+        `Invalid file! Please upload only JPG, JPEG, PNG, or WEBP files.`,
+        {
+          description: invalidFileNames,
+          duration: 5000,
+          position: "top-right",
+        }
+      );
+    }
+
+    return validFiles;
+  };
+
   const onImageQualityChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -40,9 +80,13 @@ const ImageCompressor = () => {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     if (e.target.files) {
+      const validFiles = filterValidFiles(e.target.files);
+      if (validFiles.length === 0) {
+        return; // No valid files to process
+      }
       setCompressedImages([]);
       setCompressProgress(0);
-      setFilelist(e.target.files);
+      setFilelist(validFiles);
     }
   };
 
@@ -144,9 +188,15 @@ const ImageCompressor = () => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragActive(false);
+
+    const validFiles = filterValidFiles(e.dataTransfer.files);
+    if (validFiles.length === 0) {
+      return; // No valid files to process
+    }
+
     setCompressedImages([]);
     setCompressProgress(0);
-    setFilelist(e.dataTransfer.files);
+    setFilelist(validFiles);
   };
 
   const handleDownload = () => {
@@ -212,7 +262,7 @@ const ImageCompressor = () => {
           <input
             multiple
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/jpg,image/png,image/webp"
             onChange={handleImageUpload}
             style={{ display: "none" }}
             id="file-input"
