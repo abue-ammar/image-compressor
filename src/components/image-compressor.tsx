@@ -330,7 +330,7 @@ const ImageCompressor = () => {
             ) : (
               <div className="text-muted-foreground flex flex-col items-center justify-center py-8 text-center">
                 <Inbox className="size-14" strokeWidth={1.5} />
-                <h3 className="mb-1 text-base font-semibold">
+                <h3 className="mb-1 text-base font-medium">
                   No Compressed Images
                 </h3>
                 <p className="max-w-xs text-sm">

@@ -21,7 +21,7 @@ const Intro = () => {
               />
             </svg>
             Check it out on - GitHub
-            <span className="bg-muted-foreground/15 inline-flex items-center justify-center gap-x-2 rounded-full px-2.5 py-1.5 text-sm font-semibold">
+            <span className="bg-muted-foreground/15 inline-flex items-center justify-center gap-x-2 rounded-full px-2.5 py-1.5 text-sm font-medium">
               <svg
                 className="h-4 w-4 flex-shrink-0"
                 xmlns="http://www.w3.org/2000/svg"
