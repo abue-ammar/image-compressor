@@ -248,7 +248,7 @@ const ImageCompressor = () => {
       <div className="">
         <label
           ref={dropAreaRef}
-          className={`relative flex min-h-40 flex-col items-center overflow-hidden rounded-xl border-2 border-dashed p-4 transition-all duration-200 ease-in-out ${
+          className={`relative flex flex-col items-center overflow-hidden rounded-xl border-2 border-dashed p-2 transition-all duration-200 ease-in-out ${
             isDragActive
               ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
               : "border-gray-300 dark:border-gray-600"
