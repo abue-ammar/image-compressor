@@ -1,12 +1,13 @@
-import { LoaderCircle } from "lucide-react";
-
 const LoadingSpinner = ({ compressProgress }: { compressProgress: number }) => {
   return (
-    <div className="text-muted-foreground flex items-center gap-x-2">
-      <LoaderCircle className="size-8 animate-spin" />
-      <span className="text-muted-foreground text-lg font-medium">
+    <div className="flex items-center gap-2.5 px-6 py-3">
+      <div className="relative h-5 w-5 flex-shrink-0">
+        <div className="border-muted-foreground/20 h-5 w-5 rounded-full border-2"></div>
+        <div className="border-t-primary absolute inset-0 h-5 w-5 animate-spin rounded-full border-2 border-transparent"></div>
+      </div>
+      <span className="text-muted-foreground text-base">
         {compressProgress === 100
-          ? `Compressed ${compressProgress}%`
+          ? "Compression complete"
           : `Compressing... ${compressProgress}%`}
       </span>
     </div>
