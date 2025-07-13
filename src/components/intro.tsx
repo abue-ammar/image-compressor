@@ -48,7 +48,7 @@ const Intro = () => {
         </div>
         {/* End Title */}
         <div className="mx-auto mt-4 max-w-3xl text-center">
-          <p className="text-muted-foreground text-xl">
+          <p className="text-muted-foreground text-xl !leading-6">
             Compress images instantly and securely—right on your device. No
             uploads, no limits, no APIs. Works offline and keeps your files
             private.
