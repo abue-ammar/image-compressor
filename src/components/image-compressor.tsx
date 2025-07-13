@@ -313,8 +313,8 @@ const ImageCompressor = () => {
             <LoadingSpinner compressProgress={compressProgress} />
           </div>
         ) : (
-          <div ref={compressedImagesRef} className="mt-4">
-            <h2 className="text-lg font-bold">Compressed Images</h2>
+          <div ref={compressedImagesRef}>
+            {/* <h2 className="text-lg font-bold">Compressed Images</h2> */}
             {compressedImages?.length > 0 ? (
               <PhotoProvider>
                 <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-3">
@@ -330,7 +330,7 @@ const ImageCompressor = () => {
             ) : (
               <div className="text-muted-foreground flex flex-col items-center justify-center py-8 text-center">
                 <Inbox className="size-14" strokeWidth={1.5} />
-                <h3 className="mb-1 text-base font-semibold">
+                <h3 className="mb-1 text-base font-medium">
                   No Compressed Images
                 </h3>
                 <p className="max-w-xs text-sm">
