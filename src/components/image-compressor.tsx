@@ -283,7 +283,7 @@ const ImageCompressor = () => {
             <p className="text-muted-foreground text-sm">
               JPG, JPEG, PNG, WEBP
             </p>
-            <p className="text-destructive text-xs">
+            <p className="text-destructive text-xs" ref={compressedImagesRef}>
               **PNG formatted images need to be larger than 120KB
             </p>
           </div>
@@ -315,7 +315,7 @@ const ImageCompressor = () => {
             <LoadingSpinner compressProgress={compressProgress} />
           </div>
         ) : (
-          <div ref={compressedImagesRef}>
+          <div>
             {compressedImages?.length > 0 ? (
               <PhotoProvider>
                 <div className="grid grid-cols-1 gap-4 py-4 will-change-transform md:grid-cols-2 lg:grid-cols-3">
