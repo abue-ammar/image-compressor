@@ -4,6 +4,64 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Fade-in animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInFast {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-fadeInFast {
+  animation: fadeInFast 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+/* Performance optimizations */
+.will-change-transform {
+  will-change: transform, opacity;
+}
+
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animate-delay-150 {
+  animation-delay: 150ms;
+}
+
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animate-delay-250 {
+  animation-delay: 250ms;
+}
+
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+
 html {
   scroll-behavior: smooth;
   font-variation-settings: normal;

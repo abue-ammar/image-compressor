@@ -241,11 +241,13 @@ const ImageCompressor = () => {
   return (
     <div className="container mx-auto px-4">
       <Intro />
-      <ImageQualitySlider
-        value={value}
-        onImageQualityChange={onImageQualityChange}
-      />
-      <div className="">
+      <div className="animate-fadeIn animate-delay-150">
+        <ImageQualitySlider
+          value={value}
+          onImageQualityChange={onImageQualityChange}
+        />
+      </div>
+      <div className="animate-fadeIn animate-delay-200">
         <label
           ref={dropAreaRef}
           className={`relative flex flex-col items-center overflow-hidden rounded-xl border-2 border-dashed p-2 transition-all duration-200 ease-in-out ${
@@ -288,7 +290,7 @@ const ImageCompressor = () => {
         </label>
 
         {compressedImages?.length > 0 && filelist?.length > 0 && (
-          <div className="mt-4 flex justify-end gap-x-4">
+          <div className="animate-fadeInFast mt-4 flex justify-end gap-x-4">
             <Button variant={"default"} onClick={handleDownload}>
               <Download />
               Download All (ZIP)
@@ -317,18 +319,23 @@ const ImageCompressor = () => {
             {/* <h2 className="text-lg font-bold">Compressed Images</h2> */}
             {compressedImages?.length > 0 ? (
               <PhotoProvider>
-                <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 py-4 will-change-transform md:grid-cols-2 lg:grid-cols-3">
                   {compressedImages.map((image, i) => (
-                    <ImagePreviewCard
-                      key={i}
-                      onSingleFileDownload={onSingleFileDownload}
-                      {...image}
-                    />
+                    <div
+                      key={`${image.fileName}-${i}`}
+                      className="animate-fadeInFast"
+                      style={{ animationDelay: `${Math.min(i * 50, 300)}ms` }}
+                    >
+                      <ImagePreviewCard
+                        onSingleFileDownload={onSingleFileDownload}
+                        {...image}
+                      />
+                    </div>
                   ))}
                 </div>
               </PhotoProvider>
             ) : (
-              <div className="text-muted-foreground flex flex-col items-center justify-center py-8 text-center">
+              <div className="text-muted-foreground animate-fadeIn flex flex-col items-center justify-center py-8 text-center">
                 <Inbox className="size-14" strokeWidth={1.5} />
                 <h3 className="mb-1 text-base font-medium">
                   No Compressed Images

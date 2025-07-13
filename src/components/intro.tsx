@@ -1,6 +1,6 @@
 const Intro = () => {
   return (
-    <section>
+    <section className="animate-fadeIn animate-delay-100">
       <div className="container mx-auto px-4 py-10 md:px-6 lg:py-16 2xl:max-w-[1400px]">
         {/* Announcement Banner */}
         <div className="flex justify-center">
