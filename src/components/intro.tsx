@@ -1,7 +1,7 @@
 const Intro = () => {
   return (
     <section className="animate-fadeIn animate-delay-100">
-      <div className="container mx-auto px-4 py-10 md:px-6 lg:py-16 2xl:max-w-[1400px]">
+      <div className="container mx-auto py-8 2xl:max-w-[1400px]">
         {/* Announcement Banner */}
         <div className="flex justify-center">
           <a
@@ -42,20 +42,20 @@ const Intro = () => {
         {/* End Announcement Banner */}
         {/* Title */}
         <div className="mx-auto mt-4 max-w-2xl text-center">
-          <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+          <h1 className="scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-4xl">
             Free & Open Source Image Compressor
           </h1>
         </div>
         {/* End Title */}
         <div className="mx-auto mt-4 max-w-3xl text-center">
-          <p className="text-muted-foreground text-xl !leading-6">
+          <p className="text-muted-foreground text-lg !leading-6">
             Compress images instantly and securely—right on your device. No
             uploads, no limits, no APIs. Works offline and keeps your files
             private.
           </p>
         </div>
         {/* Buttons */}
-        <div className="mt-4 flex justify-center">
+        {/* <div className="mt-4 flex justify-center">
           <a
             href="https://www.producthunt.com/posts/image-compressor-4?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-image-compressor-4"
             target="_blank"
@@ -67,7 +67,7 @@ const Intro = () => {
               style={{ width: "187.5px", height: "40.5px" }}
             />
           </a>
-        </div>
+        </div> */}
       </div>
     </section>
   );

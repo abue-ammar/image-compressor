@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="bg-background text-foreground animate-fadeIn animate-delay-300 container mx-auto flex items-center justify-center px-4 py-2 text-center">
+    <footer className="bg-background text-foreground animate-fadeIn animate-delay-300 container mx-auto flex items-center justify-center px-4 pb-2 text-center">
       <span className="inline-flex gap-x-1">
         Built with{" "}
         <span>

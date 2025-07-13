@@ -316,7 +316,6 @@ const ImageCompressor = () => {
           </div>
         ) : (
           <div ref={compressedImagesRef}>
-            {/* <h2 className="text-lg font-bold">Compressed Images</h2> */}
             {compressedImages?.length > 0 ? (
               <PhotoProvider>
                 <div className="grid grid-cols-1 gap-4 py-4 will-change-transform md:grid-cols-2 lg:grid-cols-3">
@@ -335,7 +334,7 @@ const ImageCompressor = () => {
                 </div>
               </PhotoProvider>
             ) : (
-              <div className="text-muted-foreground animate-fadeIn flex flex-col items-center justify-center py-8 text-center">
+              <div className="text-muted-foreground animate-fadeIn flex flex-col items-center justify-center py-4 text-center">
                 <Inbox className="size-14" strokeWidth={1.5} />
                 <h3 className="mb-1 text-base font-medium">
                   No Compressed Images
