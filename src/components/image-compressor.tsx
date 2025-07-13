@@ -248,7 +248,7 @@ const ImageCompressor = () => {
       <div className="">
         <label
           ref={dropAreaRef}
-          className={`relative flex min-h-40 flex-col items-center overflow-hidden rounded-xl border-2 border-dashed p-4 transition-all duration-200 ease-in-out ${
+          className={`relative flex flex-col items-center overflow-hidden rounded-xl border-2 border-dashed p-2 transition-all duration-200 ease-in-out ${
             isDragActive
               ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
               : "border-gray-300 dark:border-gray-600"
@@ -273,7 +273,7 @@ const ImageCompressor = () => {
             <div className="mb-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border bg-white dark:bg-gray-800">
               <ImageIcon className="size-4 opacity-60" />
             </div>
-            <p className="mb-1.5 text-base font-medium">
+            <p className="mb-1 text-base font-medium">
               {isDragActive
                 ? "Drop your images here"
                 : "Drag & drop images here"}
@@ -281,40 +281,40 @@ const ImageCompressor = () => {
             <p className="text-muted-foreground text-sm">
               JPG, JPEG, PNG, WEBP
             </p>
-            <p className="text-destructive text-sm">
+            <p className="text-destructive text-xs">
               **PNG formatted images need to be larger than 120KB
             </p>
           </div>
         </label>
-        <div className="my-4 flex justify-end gap-x-4">
-          {compressedImages?.length > 0 && filelist?.length > 0 && (
-            <>
-              <Button variant={"default"} onClick={handleDownload}>
-                <Download />
-                Download All (ZIP)
-              </Button>
-              <Button
-                variant={"destructive"}
-                onClick={() => {
-                  setValue(60);
-                  setCompressProgress(0);
-                  setCompressedImages([]);
-                  setFilelist([]);
-                }}
-              >
-                <RefreshCcw />
-                Reset
-              </Button>
-            </>
-          )}
-        </div>
+
+        {compressedImages?.length > 0 && filelist?.length > 0 && (
+          <div className="mt-4 flex justify-end gap-x-4">
+            <Button variant={"default"} onClick={handleDownload}>
+              <Download />
+              Download All (ZIP)
+            </Button>
+            <Button
+              variant={"destructive"}
+              onClick={() => {
+                setValue(60);
+                setCompressProgress(0);
+                setCompressedImages([]);
+                setFilelist([]);
+              }}
+            >
+              <RefreshCcw />
+              Reset
+            </Button>
+          </div>
+        )}
+
         {loading ? (
           <div className="flex flex-col items-center justify-center py-8">
             <LoadingSpinner compressProgress={compressProgress} />
           </div>
         ) : (
-          <div ref={compressedImagesRef}>
-            <h2 className="mb-2 text-xl font-semibold">Compressed Images</h2>
+          <div ref={compressedImagesRef} className="mt-4">
+            <h2 className="text-lg font-bold">Compressed Images</h2>
             {compressedImages?.length > 0 ? (
               <PhotoProvider>
                 <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-3">
@@ -330,7 +330,7 @@ const ImageCompressor = () => {
             ) : (
               <div className="text-muted-foreground flex flex-col items-center justify-center py-8 text-center">
                 <Inbox className="size-14" strokeWidth={1.5} />
-                <h3 className="mb-1 text-lg font-semibold">
+                <h3 className="mb-1 text-base font-semibold">
                   No Compressed Images
                 </h3>
                 <p className="max-w-xs text-sm">

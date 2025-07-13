@@ -26,7 +26,7 @@ const ImageQualitySlider = ({
 
   return (
     <div className="w-full">
-      <label className="block text-xl font-semibold">
+      <label className="text-base font-bold">
         Image Quality: {value}%
         <span style={{ color }} className="ml-1">
           ({label})

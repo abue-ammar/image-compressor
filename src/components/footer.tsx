@@ -19,7 +19,7 @@ const Footer = () => {
           href="https://github.com/abue-ammar"
           className="text-primary hover:text-primary-foreground underline transition-colors"
         >
-          Abue Ammar.
+          Abue Ammar
         </a>
       </span>
     </footer>
