@@ -313,8 +313,8 @@ const ImageCompressor = () => {
             <LoadingSpinner compressProgress={compressProgress} />
           </div>
         ) : (
-          <div ref={compressedImagesRef} className="mt-4">
-            <h2 className="text-lg font-bold">Compressed Images</h2>
+          <div ref={compressedImagesRef}>
+            {/* <h2 className="text-lg font-bold">Compressed Images</h2> */}
             {compressedImages?.length > 0 ? (
               <PhotoProvider>
                 <div className="grid grid-cols-1 gap-4 py-4 md:grid-cols-2 lg:grid-cols-3">
