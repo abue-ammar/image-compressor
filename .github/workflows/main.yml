@@ -199,7 +199,7 @@ jobs:
           npx tauri android init
 
       - name: Build Android APK
-        run: npx tauri android build --apk
+        run: npx tauri android build --apk --target aarch64 --target armv7
 
       - name: List Android Build Output
         run: |
