@@ -190,11 +190,13 @@ jobs:
 
       - name: Initialize Android Project
         run: |
-          if [ ! -d "src-tauri/gen/android/app" ]; then
-            npx tauri android init
-          else
-            echo "Android project already initialized"
+          # Remove existing Android project to avoid package name conflicts
+          if [ -d "src-tauri/gen/android" ]; then
+            echo "Removing existing Android project to avoid package conflicts..."
+            rm -rf src-tauri/gen/android
           fi
+          echo "Initializing Android project..."
+          npx tauri android init
 
       - name: Build Android APK
         run: npx tauri android build --apk
