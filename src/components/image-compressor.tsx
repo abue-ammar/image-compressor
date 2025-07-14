@@ -334,7 +334,7 @@ const ImageCompressor = () => {
                 </div>
               </PhotoProvider>
             ) : (
-              <div className="text-muted-foreground animate-fadeIn flex flex-col items-center justify-center py-4 text-center">
+              <div className="text-muted-foreground animate-fadeIn flex flex-col items-center justify-center py-6 text-center md:py-10">
                 <Inbox className="size-14" strokeWidth={1.5} />
                 <h3 className="mb-1 text-base font-medium">
                   No Compressed Images
