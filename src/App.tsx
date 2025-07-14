@@ -24,7 +24,7 @@ function App() {
     resetCompression,
   } = useImageCompression();
 
-  const imageResultRef = useRef<HTMLParagraphElement>(null);
+  const imageResultRef = useRef<HTMLDivElement>(null);
 
   // Add scroll effect when compressed images are available
   useEffect(() => {
@@ -40,42 +40,40 @@ function App() {
   }, [compressedImages.length]);
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <div className="relative flex min-h-screen flex-col">
+      <div className="flex h-screen flex-col overflow-hidden">
         <Header />
-        <main className="container mx-auto flex-1 px-4">
+        <main className="container mx-auto flex-1 overflow-y-auto px-4">
           <Intro />
           <ImageQualitySlider
             value={value}
             onImageQualityChange={onImageQualityChange}
           />
 
-          <div className="animate-fadeIn animate-delay-200">
+          <div
+            className="animate-fadeIn animate-delay-200"
+            ref={imageResultRef}
+          >
             <DropZone
               onFilesSelected={handleImageUpload}
               hasCompressedImages={compressedImages.length > 0}
-              ref={imageResultRef}
             />
-
             <ActionButtons
               zipFile={zipFile}
               onReset={resetCompression}
               hasCompressedImages={compressedImages.length > 0}
               hasFileList={filelist.length > 0}
             />
-
             {loading ? (
               <div className="flex flex-col items-center justify-center py-8">
                 <LoadingSpinner compressProgress={compressProgress} />
               </div>
             ) : (
-              <div>
-                <CompressedImagesGrid compressedImages={compressedImages} />
-              </div>
+              <CompressedImagesGrid compressedImages={compressedImages} />
             )}
           </div>
+          <Footer />
           <Toaster />
         </main>
-        <Footer />
       </div>
     </ThemeProvider>
   );
