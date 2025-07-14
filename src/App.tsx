@@ -24,13 +24,13 @@ function App() {
     resetCompression,
   } = useImageCompression();
 
-  const compressedImagesRef = useRef<HTMLDivElement>(null);
+  const imageResultRef = useRef<HTMLParagraphElement>(null);
 
   // Add scroll effect when compressed images are available
   useEffect(() => {
-    if (compressedImages.length > 0 && compressedImagesRef.current) {
+    if (compressedImages.length > 0 && imageResultRef.current) {
       setTimeout(() => {
-        compressedImagesRef.current?.scrollIntoView({
+        imageResultRef.current?.scrollIntoView({
           behavior: "smooth",
           block: "start",
           inline: "nearest",
@@ -40,20 +40,20 @@ function App() {
   }, [compressedImages.length]);
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <div className="flex min-h-screen flex-col overflow-y-hidden">
+      <div className="relative flex min-h-screen flex-col">
         <Header />
         <main className="container mx-auto flex-1 px-4">
           <Intro />
-          <div className="animate-fadeIn animate-delay-150">
-            <ImageQualitySlider
-              value={value}
-              onImageQualityChange={onImageQualityChange}
-            />
-          </div>
+          <ImageQualitySlider
+            value={value}
+            onImageQualityChange={onImageQualityChange}
+          />
+
           <div className="animate-fadeIn animate-delay-200">
             <DropZone
               onFilesSelected={handleImageUpload}
               hasCompressedImages={compressedImages.length > 0}
+              ref={imageResultRef}
             />
 
             <ActionButtons
@@ -68,7 +68,7 @@ function App() {
                 <LoadingSpinner compressProgress={compressProgress} />
               </div>
             ) : (
-              <div ref={compressedImagesRef}>
+              <div>
                 <CompressedImagesGrid compressedImages={compressedImages} />
               </div>
             )}

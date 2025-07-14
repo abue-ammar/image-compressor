@@ -6,9 +6,14 @@ import { filterValidFiles } from "../utils/file-validation";
 interface DropZoneProps {
   onFilesSelected: (files: File[]) => void;
   hasCompressedImages: boolean;
+  ref?: React.RefObject<HTMLParagraphElement | null>;
 }
 
-const DropZone = ({ onFilesSelected, hasCompressedImages }: DropZoneProps) => {
+const DropZone = ({
+  onFilesSelected,
+  hasCompressedImages,
+  ref,
+}: DropZoneProps) => {
   const dropAreaRef = useRef<HTMLLabelElement>(null);
 
   const {
@@ -62,7 +67,7 @@ const DropZone = ({ onFilesSelected, hasCompressedImages }: DropZoneProps) => {
           {isDragActive ? "Drop your images here" : "Drag & drop images here"}
         </p>
         <p className="text-muted-foreground text-sm">JPG, JPEG, PNG, WEBP</p>
-        <p className="text-destructive text-xs">
+        <p className="text-destructive text-xs" ref={ref}>
           **PNG formatted images need to be larger than 120KB
         </p>
       </div>
