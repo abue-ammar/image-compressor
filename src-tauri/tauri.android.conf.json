@@ -2,7 +2,13 @@
   "bundle": {
     "android": {
       "minSdkVersion": 24,
-      "versionCode": 1
+      "targetSdkVersion": 34,
+      "versionCode": 1,
+      "versionName": "1.0.0",
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
     }
   },
   "plugins": {
