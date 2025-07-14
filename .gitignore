@@ -22,3 +22,21 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# Rust (Tauri backend)
+src-tauri/target/
+src-tauri/.cargo/
+src-tauri/Cargo.lock
+
+# Tauri build artifacts
+/src-tauri/bundled/
+/src-tauri/gen/
+**/*.dmg
+**/*.app
+**/*.deb
+**/*.rpm
+**/*.msi
+**/*.exe
+**/*.apk
+**/*.aab

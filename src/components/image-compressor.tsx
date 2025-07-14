@@ -1,10 +1,11 @@
+import { save } from "@tauri-apps/plugin-dialog";
+import { writeFile } from "@tauri-apps/plugin-fs";
 import Compressor from "compressorjs";
 import JSZip from "jszip";
 import { Download, ImageIcon, Inbox, RefreshCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { PhotoProvider } from "react-photo-view";
 import { toast } from "sonner";
-
 import ImagePreviewCard from "./image-preview-card";
 import ImageQualitySlider from "./image-quality-slider";
 import Intro from "./intro";
@@ -199,30 +200,55 @@ const ImageCompressor = () => {
     setFilelist(validFiles);
   };
 
-  const handleDownload = () => {
-    if (zipFile) {
-      const downloadLink = document.createElement("a");
-      downloadLink.href = URL.createObjectURL(zipFile);
-      downloadLink.download = "compressed_images.zip";
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
+  const handleDownload = async () => {
+    if (!zipFile) return;
+    try {
+      const arrayBuffer = await zipFile.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+
+      const filePath = await save({
+        defaultPath: "compressed_images.zip",
+        filters: [{ name: "Zip Files", extensions: ["zip"] }],
+      });
+
+      if (filePath) {
+        await writeFile(filePath, uint8Array);
+        toast.success("ZIP file saved successfully!");
+      }
+    } catch (error) {
+      toast.error("Failed to save ZIP file");
+      console.error("Download error:", error);
     }
   };
 
-  const onSingleFileDownload = (file: string) => {
-    const downloadLink = document.createElement("a");
-    downloadLink.href = file;
-    const regexResult = /^data:(.+?)(?:;(?:.+?))?,/.exec(file);
-    let extension = "jpg";
-    if (regexResult && regexResult[1]) {
-      const contentType = regexResult[1];
-      extension = contentType.split("/")[1] || "jpg";
+  const onSingleFileDownload = async (file: string) => {
+    try {
+      const regexResult = /^data:(.+?)(?:;(?:.+?))?,/.exec(file);
+      let extension = "jpg";
+      let contentType = "image/jpeg";
+
+      if (regexResult && regexResult[1]) {
+        contentType = regexResult[1];
+        extension = contentType.split("/")[1] || "jpg";
+      }
+      // Get file data from base64
+      const base64Data = file.split(",")[1];
+      const binary = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0));
+
+      // Ask user where to save
+      const filePath = await save({
+        defaultPath: `compressed_image.${extension}`,
+        filters: [{ name: "Images", extensions: [extension] }],
+      });
+
+      if (filePath) {
+        await writeFile(filePath, binary);
+        toast.success("Image saved successfully!");
+      }
+    } catch (error) {
+      toast.error("Failed to save image");
+      console.error("Download error:", error);
     }
-    downloadLink.download = `compressed_image.${extension}`;
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
   };
 
   // Add scroll effect when compressed images are available

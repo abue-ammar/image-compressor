@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "image-compressor",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.abueammar.imagecompressor",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
@@ -33,5 +33,10 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "dialog": null,
+    "fs": null,
+    "path": null
   }
 }
