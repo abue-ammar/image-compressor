@@ -1,22 +1,7 @@
 {
-  "package": {
-    "name": "com.abueammar.imagecompressor",
-    "version": "1.0.0"
-  },
-  "android": {
-    "sdkVersion": 34,
-    "minSdkVersion": 24,
-    "ndkVersion": "27.2.12479018",
-    "buildToolsVersion": "34.0.0",
-    "targetSdkVersion": 34,
-    "targetArchs": ["arm64-v8a", "armeabi-v7a"]
-  },
-  "app": {
-    "name": "Image Compressor",
-    "icon": "icons/icon.png",
-    "resources": ["src-tauri/icons"],
-    "assets": "../dist"
-  },
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "Image Compressor",
+  "identifier": "com.abueammar.imagecompressor",
   "plugins": {
     "dialog": null,
     "fs": null,
