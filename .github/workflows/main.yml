@@ -250,6 +250,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-desktop, build-android]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
@@ -262,10 +265,33 @@ jobs:
             zip -r "../${dir}.zip" "$dir"
           done
 
+      - name: Generate release tag
+        id: tag
+        run: |
+          # Create a timestamp-based tag
+          TAG="v$(date +'%Y.%m.%d')-$(echo ${{ github.sha }} | cut -c1-7)"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Generated tag: $TAG"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: Release ${{ github.sha }}
-          tag_name: ${{ github.sha }}
+          name: "Release ${{ steps.tag.outputs.tag }}"
+          tag_name: ${{ steps.tag.outputs.tag }}
+          body: |
+            Automated release from commit ${{ github.sha }}
+
+            ## Changes
+            - Built for all platforms (Windows, macOS, Linux, Android)
+            - Web deployment to GitHub Pages
+
+            ## Downloads
+            - **Windows**: Download `windows-build.zip`
+            - **macOS (Intel)**: Download `macos-intel-build.zip`
+            - **macOS (Apple Silicon)**: Download `macos-apple-silicon-build.zip`
+            - **Linux**: Download `linux-build.zip`
+            - **Android**: Download `android-build.zip`
           files: |
             *.zip
+          draft: false
+          prerelease: false
