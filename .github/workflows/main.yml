@@ -18,6 +18,7 @@ jobs:
   build-desktop:
     name: Build Desktop Apps
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
@@ -66,8 +67,57 @@ jobs:
           sudo apt update
           sudo apt install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
+      - name: Install macOS Dependencies
+        if: matrix.os == 'macos-latest'
+        run: |
+          # Install genisoimage for DMG creation
+          brew install genisoimage || echo "genisoimage already installed or not needed"
+
+      - name: Debug Build Environment
+        run: |
+          echo "OS: ${{ matrix.os }}"
+          echo "Target: ${{ matrix.target }}"
+          echo "Node version: $(node --version)"
+          echo "npm version: $(npm --version)"
+          echo "Rust version: $(rustc --version)"
+          echo "Cargo version: $(cargo --version)"
+          if [ "${{ matrix.os }}" = "macos-latest" ]; then
+            echo "macOS version: $(sw_vers)"
+            echo "Available disk space: $(df -h)"
+          fi
+        shell: bash
+
       - name: Build Tauri App
-        run: npx tauri build --target ${{ matrix.target }}
+        run: |
+          # Build based on platform
+          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+            npx tauri build --target ${{ matrix.target }} --bundles deb,appimage
+          elif [ "${{ matrix.os }}" = "windows-latest" ]; then
+            npx tauri build --target ${{ matrix.target }} --bundles nsis,msi
+          elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+            npx tauri build --target ${{ matrix.target }} --bundles app
+          fi
+        shell: bash
+
+      - name: Build DMG (macOS only)
+        if: matrix.os == 'macos-latest'
+        run: |
+          # Try to build DMG, but don't fail the entire job if it fails
+          echo "Attempting to build DMG..."
+          if npx tauri build --target ${{ matrix.target }} --bundles dmg; then
+            echo "DMG build successful"
+          else
+            echo "DMG build failed, but continuing with app bundle"
+            ls -la src-tauri/target/${{ matrix.target }}/release/bundle/ || echo "No bundle directory found"
+          fi
+        continue-on-error: true
+        shell: bash
+
+      - name: List Build Output
+        run: |
+          echo "Build output structure:"
+          find src-tauri/target/${{ matrix.target }}/release/bundle -type f -name "*" 2>/dev/null | head -20 || echo "No bundle files found"
+        shell: bash
 
       - name: Upload Release Artifact
         uses: actions/upload-artifact@v4
@@ -76,6 +126,7 @@ jobs:
           path: |
             src-tauri/target/${{ matrix.target }}/release/bundle
             !**/*.dSYM
+          if-no-files-found: warn
 
   build-android:
     name: Build Android APK
