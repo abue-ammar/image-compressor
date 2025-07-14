@@ -51,11 +51,20 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
+      - name: Cache Rust Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
       - name: Install Linux Dependencies
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt update
-          sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
       - name: Build Tauri App
         run: npx tauri build --target ${{ matrix.target }}
@@ -93,8 +102,27 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Cache Android Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.android/cache
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            src-tauri/gen/android/.gradle
+          key: ${{ runner.os }}-android-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
       - name: Install Rust Toolchain
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-android-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Android Rust Targets
         run: |
@@ -109,15 +137,28 @@ jobs:
         run: |
           sdkmanager "ndk;27.2.12479018"
 
+      - name: Initialize Android Project
+        run: |
+          if [ ! -d "src-tauri/gen/android/app" ]; then
+            npx tauri android init
+          else
+            echo "Android project already initialized"
+          fi
+
       - name: Build Android APK
         run: npx tauri android build --apk
+
+      - name: List Android Build Output
+        run: |
+          echo "Contents of src-tauri/gen/android/app/build/outputs/apk:"
+          find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" -type f || echo "No APK files found"
 
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
           name: android-build
           path: |
-            src-tauri/gen/android/app/build/outputs/apk/universal/release/*.apk
+            src-tauri/gen/android/app/build/outputs/apk/**/*.apk
 
   web:
     name: Build Web & Deploy to GitHub Pages

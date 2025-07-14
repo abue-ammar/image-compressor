@@ -1,0 +1,13 @@
+{
+  "bundle": {
+    "android": {
+      "minSdkVersion": 24,
+      "versionCode": 1
+    }
+  },
+  "plugins": {
+    "dialog": null,
+    "fs": null,
+    "path": null
+  }
+}
