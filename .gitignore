@@ -45,3 +45,4 @@ src-tauri/Cargo.lock
 **/keystore.properties
 *.jks
 *.keystore
+upload-keystore.jks.base64
