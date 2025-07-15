@@ -31,7 +31,7 @@ src-tauri/Cargo.lock
 
 # Tauri build artifacts
 /src-tauri/bundled/
-/src-tauri/gen/
+/src-tauri/gen/android/app/build
 **/*.dmg
 **/*.app
 **/*.deb

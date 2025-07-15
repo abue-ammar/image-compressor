@@ -47,7 +47,45 @@ Go to your GitHub repository settings and add the following secrets:
 | `ANDROID_KEY_PASSWORD` | The password you set for the keystore         | `your_secure_password`            |
 | `ANDROID_KEY_BASE64`   | The base64-encoded keystore content           | Content of `keystore.base64` file |
 
-### 4. Security Best Practices
+### 4. Configure Gradle for Signing
+
+The Gradle build configuration has been automatically set up in `src-tauri/gen/android/app/build.gradle.kts` to use the signing key:
+
+```kotlin
+import java.io.FileInputStream
+
+// ... other configurations ...
+
+signingConfigs {
+    create("release") {
+        val keystorePropertiesFile = rootProject.file("keystore.properties")
+        val keystoreProperties = Properties()
+        if (keystorePropertiesFile.exists()) {
+            keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+        }
+
+        keyAlias = keystoreProperties["keyAlias"] as String
+        keyPassword = keystoreProperties["password"] as String
+        storeFile = file(keystoreProperties["storeFile"] as String)
+        storePassword = keystoreProperties["password"] as String
+    }
+}
+
+buildTypes {
+    getByName("release") {
+        signingConfig = signingConfigs.getByName("release")
+        // ... other release configurations ...
+    }
+}
+```
+
+This configuration:
+
+- Reads the keystore properties from `keystore.properties`
+- Uses the signing key for release builds
+- Automatically signs APKs during the build process
+
+### 5. Security Best Practices
 
 - **Never commit** the `keystore.properties` file to your repository
 - **Never commit** the actual `.jks` keystore file
