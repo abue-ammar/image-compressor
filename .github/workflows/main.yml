@@ -47,6 +47,60 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Update Tauri Icons
+        run: |
+          echo "Updating Tauri icons with custom logo..."
+          node update-icons.js
+
+          # Generate ICO and ICNS files if ImageMagick is available
+          if command -v convert &> /dev/null; then
+            echo "Generating ICO file for Windows..."
+            convert src-tauri/icons/icon.png -resize 256x256 src-tauri/icons/icon.ico
+            
+            echo "Generating ICNS file for macOS..."
+            # Create iconset directory
+            mkdir -p src-tauri/icons/icon.iconset
+            
+            # Generate different sizes for iconset
+            convert src-tauri/icons/icon.png -resize 16x16 src-tauri/icons/icon.iconset/icon_16x16.png
+            convert src-tauri/icons/icon.png -resize 32x32 src-tauri/icons/icon.iconset/icon_16x16@2x.png
+            convert src-tauri/icons/icon.png -resize 32x32 src-tauri/icons/icon.iconset/icon_32x32.png
+            convert src-tauri/icons/icon.png -resize 64x64 src-tauri/icons/icon.iconset/icon_32x32@2x.png
+            convert src-tauri/icons/icon.png -resize 128x128 src-tauri/icons/icon.iconset/icon_128x128.png
+            convert src-tauri/icons/icon.png -resize 256x256 src-tauri/icons/icon.iconset/icon_128x128@2x.png
+            convert src-tauri/icons/icon.png -resize 256x256 src-tauri/icons/icon.iconset/icon_256x256.png
+            convert src-tauri/icons/icon.png -resize 512x512 src-tauri/icons/icon.iconset/icon_256x256@2x.png
+            convert src-tauri/icons/icon.png -resize 512x512 src-tauri/icons/icon.iconset/icon_512x512.png
+            convert src-tauri/icons/icon.png -resize 1024x1024 src-tauri/icons/icon.iconset/icon_512x512@2x.png
+            
+            # Create ICNS file
+            if command -v iconutil &> /dev/null; then
+              iconutil -c icns src-tauri/icons/icon.iconset -o src-tauri/icons/icon.icns
+            else
+              echo "iconutil not available, keeping existing icon.icns"
+            fi
+            
+            # Clean up iconset
+            rm -rf src-tauri/icons/icon.iconset
+            
+            echo "Resizing Windows Square logos..."
+            # Resize all Windows Square logos to their proper dimensions
+            convert src-tauri/icons/Square30x30Logo.png -resize 30x30 src-tauri/icons/Square30x30Logo.png
+            convert src-tauri/icons/Square44x44Logo.png -resize 44x44 src-tauri/icons/Square44x44Logo.png
+            convert src-tauri/icons/Square71x71Logo.png -resize 71x71 src-tauri/icons/Square71x71Logo.png
+            convert src-tauri/icons/Square89x89Logo.png -resize 89x89 src-tauri/icons/Square89x89Logo.png
+            convert src-tauri/icons/Square107x107Logo.png -resize 107x107 src-tauri/icons/Square107x107Logo.png
+            convert src-tauri/icons/Square142x142Logo.png -resize 142x142 src-tauri/icons/Square142x142Logo.png
+            convert src-tauri/icons/Square150x150Logo.png -resize 150x150 src-tauri/icons/Square150x150Logo.png
+            convert src-tauri/icons/Square284x284Logo.png -resize 284x284 src-tauri/icons/Square284x284Logo.png
+            convert src-tauri/icons/Square310x310Logo.png -resize 310x310 src-tauri/icons/Square310x310Logo.png
+            convert src-tauri/icons/StoreLogo.png -resize 50x50 src-tauri/icons/StoreLogo.png
+            
+            echo "All Windows logos resized successfully!"
+          else
+            echo "ImageMagick not available, keeping existing ICO and ICNS files"
+          fi
+
       - name: Install Rust Toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -143,6 +197,21 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+
+      - name: Update Tauri Icons
+        run: |
+          echo "Updating Tauri icons with custom logo..."
+          node update-icons.js
+
+          # For Android, we don't need to resize the Windows logos
+          # but we'll generate the Android icon from our logo
+          if command -v convert &> /dev/null; then
+            echo "Generating Android icon..."
+            # Android typically uses the main icon.png
+            echo "Android will use the main icon.png (512x512)"
+          else
+            echo "ImageMagick not available, using existing icons"
+          fi
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -342,8 +411,10 @@ jobs:
       - name: Generate release tag
         id: tag
         run: |
-          # Create a timestamp-based tag
-          TAG="v$(date +'%Y.%m.%d')-$(echo ${{ github.sha }} | cut -c1-7)"
+          # Get version from package.json
+          VERSION=$(node -p "require('./package.json').version")
+          # Create a tag with project version and git SHA
+          TAG="v${VERSION}-$(echo ${{ github.sha }} | cut -c1-7)"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "Generated tag: $TAG"
 
