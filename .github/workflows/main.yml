@@ -198,18 +198,28 @@ jobs:
           echo "Initializing Android project..."
           npx tauri android init
 
-      - name: Build Android APK
-        run: npx tauri android build --apk --target aarch64 --target armv7
+      - name: Setup Android Signing
+        run: |
+          cd src-tauri/gen/android
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" > keystore.properties
+          echo "password=${{ secrets.ANDROID_KEY_PASSWORD }}" >> keystore.properties
+          base64 -d <<< "${{ secrets.ANDROID_KEY_BASE64 }}" > $RUNNER_TEMP/keystore.jks
+          echo "storeFile=$RUNNER_TEMP/keystore.jks" >> keystore.properties
+          echo "Keystore properties configured:"
+          cat keystore.properties | sed 's/password=.*/password=***/'
+
+      - name: Build Signed Android APK
+        run: npx tauri android build --apk --split-per-abi
 
       - name: List Android Build Output
         run: |
           echo "Contents of src-tauri/gen/android/app/build/outputs/apk:"
           find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" -type f || echo "No APK files found"
 
-      - name: Upload Android APK
+      - name: Upload Signed Android APK
         uses: actions/upload-artifact@v4
         with:
-          name: android-build
+          name: android-build-signed
           path: |
             src-tauri/gen/android/app/build/outputs/apk/**/*.apk
 
@@ -290,7 +300,7 @@ jobs:
             - **macOS (Intel)**: Download `macos-intel-build.zip`
             - **macOS (Apple Silicon)**: Download `macos-apple-silicon-build.zip`
             - **Linux**: Download `linux-build.zip`
-            - **Android**: Download `android-build.zip`
+            - **Android**: Download `android-build-signed.zip`
           files: |
             *.zip
           draft: false
