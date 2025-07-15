@@ -44,11 +44,11 @@ const dayThemeContent = `<resources xmlns:tools="http://schemas.android.com/tool
     <style name="Theme.app" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         
-        <!-- Status bar color (transparent to follow system) -->
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- Status bar color (use system default) -->
+        <item name="android:statusBarColor">@android:color/system_neutral1_100</item>
         
-        <!-- Navigation bar color (transparent to follow system) -->
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <!-- Navigation bar color (use system default) -->
+        <item name="android:navigationBarColor">@android:color/system_neutral1_100</item>
         
         <!-- Make status bar icons dark for light theme -->
         <item name="android:windowLightStatusBar" tools:targetApi="M">true</item>
@@ -56,11 +56,8 @@ const dayThemeContent = `<resources xmlns:tools="http://schemas.android.com/tool
         <!-- Make navigation bar icons dark for light theme -->
         <item name="android:windowLightNavigationBar" tools:targetApi="O">true</item>
         
-        <!-- Enable edge-to-edge display -->
-        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="P">shortEdges</item>
-        
         <!-- Window background -->
-        <item name="android:windowBackground">@android:color/system_neutral1_0</item>
+        <item name="android:windowBackground">@android:color/system_neutral1_50</item>
     </style>
 </resources>
 `;
@@ -72,20 +69,17 @@ const nightThemeContent = `<resources xmlns:tools="http://schemas.android.com/to
     <style name="Theme.app" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         
-        <!-- Status bar color (transparent to follow system) -->
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- Status bar color (use system default) -->
+        <item name="android:statusBarColor">@android:color/system_neutral1_900</item>
         
-        <!-- Navigation bar color (transparent to follow system) -->
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <!-- Navigation bar color (use system default) -->
+        <item name="android:navigationBarColor">@android:color/system_neutral1_900</item>
         
         <!-- Make status bar icons light for dark theme -->
         <item name="android:windowLightStatusBar" tools:targetApi="M">false</item>
         
         <!-- Make navigation bar icons light for dark theme -->
         <item name="android:windowLightNavigationBar" tools:targetApi="O">false</item>
-        
-        <!-- Enable edge-to-edge display -->
-        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="P">shortEdges</item>
         
         <!-- Window background -->
         <item name="android:windowBackground">@android:color/system_neutral1_900</item>
@@ -104,8 +98,8 @@ class MainActivity : TauriActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Enable edge-to-edge display
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        // Don't enable edge-to-edge for better system theme compatibility
+        // WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 }
 `;
