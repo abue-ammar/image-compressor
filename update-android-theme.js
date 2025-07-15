@@ -44,11 +44,11 @@ const dayThemeContent = `<resources xmlns:tools="http://schemas.android.com/tool
     <style name="Theme.app" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         
-        <!-- Status bar color (use system default) -->
-        <item name="android:statusBarColor">@android:color/system_neutral1_100</item>
+        <!-- Status bar color (use default system window background) -->
+        <item name="android:statusBarColor">?android:attr/colorBackground</item>
         
-        <!-- Navigation bar color (use system default) -->
-        <item name="android:navigationBarColor">@android:color/system_neutral1_100</item>
+        <!-- Navigation bar color (use default system window background) -->
+        <item name="android:navigationBarColor">?android:attr/colorBackground</item>
         
         <!-- Make status bar icons dark for light theme -->
         <item name="android:windowLightStatusBar" tools:targetApi="M">true</item>
@@ -56,8 +56,8 @@ const dayThemeContent = `<resources xmlns:tools="http://schemas.android.com/tool
         <!-- Make navigation bar icons dark for light theme -->
         <item name="android:windowLightNavigationBar" tools:targetApi="O">true</item>
         
-        <!-- Window background -->
-        <item name="android:windowBackground">@android:color/system_neutral1_50</item>
+        <!-- Window background (use system default) -->
+        <item name="android:windowBackground">?android:attr/colorBackground</item>
     </style>
 </resources>
 `;
@@ -69,11 +69,11 @@ const nightThemeContent = `<resources xmlns:tools="http://schemas.android.com/to
     <style name="Theme.app" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         
-        <!-- Status bar color (use system default) -->
-        <item name="android:statusBarColor">@android:color/system_neutral1_900</item>
+        <!-- Status bar color (use default system window background) -->
+        <item name="android:statusBarColor">?android:attr/colorBackground</item>
         
-        <!-- Navigation bar color (use system default) -->
-        <item name="android:navigationBarColor">@android:color/system_neutral1_900</item>
+        <!-- Navigation bar color (use default system window background) -->
+        <item name="android:navigationBarColor">?android:attr/colorBackground</item>
         
         <!-- Make status bar icons light for dark theme -->
         <item name="android:windowLightStatusBar" tools:targetApi="M">false</item>
@@ -81,8 +81,8 @@ const nightThemeContent = `<resources xmlns:tools="http://schemas.android.com/to
         <!-- Make navigation bar icons light for dark theme -->
         <item name="android:windowLightNavigationBar" tools:targetApi="O">false</item>
         
-        <!-- Window background -->
-        <item name="android:windowBackground">@android:color/system_neutral1_900</item>
+        <!-- Window background (use system default) -->
+        <item name="android:windowBackground">?android:attr/colorBackground</item>
     </style>
 </resources>
 `;
@@ -98,8 +98,12 @@ class MainActivity : TauriActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // Don't enable edge-to-edge for better system theme compatibility
-        // WindowCompat.setDecorFitsSystemWindows(window, false)
+        // Enable proper system bar handling
+        WindowCompat.setDecorFitsSystemWindows(window, true)
+        
+        // Ensure the app responds to system theme changes
+        window.statusBarColor = resources.getColor(android.R.color.transparent, theme)
+        window.navigationBarColor = resources.getColor(android.R.color.transparent, theme)
     }
 }
 `;
