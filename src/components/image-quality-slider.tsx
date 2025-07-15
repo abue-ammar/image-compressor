@@ -25,7 +25,7 @@ const ImageQualitySlider = ({
   const { label, color } = getImageQualityInfo(quality);
 
   return (
-    <div className="w-full">
+    <div className="animate-fadeIn animate-delay-150 w-full">
       <label className="text-base font-bold">
         Image Quality: {value}%
         <span style={{ color }} className="ml-1">

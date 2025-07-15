@@ -1,51 +1,385 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Build All Platforms & Deploy
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["master"]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
-# Allow one concurrent deployment
 concurrency:
-  group: "pages"
+  group: "deploy-all"
   cancel-in-progress: true
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build-desktop:
+    name: Build Desktop Apps
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            name: linux
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            name: windows
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            name: macos-intel
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            name: macos-apple-silicon
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Install Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cache Rust Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Install Linux Dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt update
+          sudo apt install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Install macOS Dependencies
+        if: matrix.os == 'macos-latest'
+        run: |
+          # Install genisoimage for DMG creation
+          brew install genisoimage || echo "genisoimage already installed or not needed"
+
+      - name: Debug Build Environment
+        run: |
+          echo "OS: ${{ matrix.os }}"
+          echo "Target: ${{ matrix.target }}"
+          echo "Node version: $(node --version)"
+          echo "npm version: $(npm --version)"
+          echo "Rust version: $(rustc --version)"
+          echo "Cargo version: $(cargo --version)"
+          if [ "${{ matrix.os }}" = "macos-latest" ]; then
+            echo "macOS version: $(sw_vers)"
+            echo "Available disk space: $(df -h)"
+          fi
+        shell: bash
+
+      - name: Build Tauri App
+        run: |
+          # Build based on platform
+          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+            npx tauri build --target ${{ matrix.target }} --bundles deb,appimage
+          elif [ "${{ matrix.os }}" = "windows-latest" ]; then
+            npx tauri build --target ${{ matrix.target }} --bundles nsis,msi
+          elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+            npx tauri build --target ${{ matrix.target }} --bundles app
+          fi
+        shell: bash
+
+      - name: Build DMG (macOS only)
+        if: matrix.os == 'macos-latest'
+        run: |
+          # Try to build DMG, but don't fail the entire job if it fails
+          echo "Attempting to build DMG..."
+          if npx tauri build --target ${{ matrix.target }} --bundles dmg; then
+            echo "DMG build successful"
+          else
+            echo "DMG build failed, but continuing with app bundle"
+            ls -la src-tauri/target/${{ matrix.target }}/release/bundle/ || echo "No bundle directory found"
+          fi
+        continue-on-error: true
+        shell: bash
+
+      - name: List Build Output
+        run: |
+          echo "Build output structure:"
+          find src-tauri/target/${{ matrix.target }}/release/bundle -type f -name "*" 2>/dev/null | head -20 || echo "No bundle files found"
+        shell: bash
+
+      - name: Upload Release Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}-build
+          path: |
+            src-tauri/target/${{ matrix.target }}/release/bundle
+            !**/*.dSYM
+          if-no-files-found: warn
+
+  build-android:
+    name: Build Android APK
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Node
-        uses: actions/setup-node@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: "npm"
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Cache Android Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.android/cache
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            src-tauri/gen/android/.gradle
+          key: ${{ runner.os }}-android-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+      - name: Install Rust Toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-android-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Install Android Rust Targets
+        run: |
+          rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
+
+      - name: Setup Android NDK
+        run: |
+          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/27.2.12479018" >> $GITHUB_ENV
+          echo "NDK_HOME=$ANDROID_SDK_ROOT/ndk/27.2.12479018" >> $GITHUB_ENV
+
+      - name: Install Android NDK
+        run: |
+          sdkmanager "ndk;27.2.12479018"
+
+      - name: Initialize Android Project
+        run: |
+          # Remove existing Android project to avoid package name conflicts
+          if [ -d "src-tauri/gen/android" ]; then
+            echo "Removing existing Android project to avoid package conflicts..."
+            rm -rf src-tauri/gen/android
+          fi
+          echo "Initializing Android project..."
+          npx tauri android init
+
+      - name: Update Android Icons
+        run: |
+          echo "Regenerating Android icons with latest logo..."
+          npx tauri icon public/logo.png
+          echo "Android icons updated successfully!"
+
+      - name: Update Android Theme
+        run: |
+          echo "Updating Android theme to follow system theme..."
+          node update-android-theme.js
+      - name: Setup Android Signing
+        run: |
+          cd src-tauri/gen/android
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" > keystore.properties
+          echo "password=${{ secrets.ANDROID_KEY_PASSWORD }}" >> keystore.properties
+          base64 -d <<< "${{ secrets.ANDROID_KEY_BASE64 }}" > $RUNNER_TEMP/keystore.jks
+          echo "storeFile=$RUNNER_TEMP/keystore.jks" >> keystore.properties
+          echo "Keystore properties configured:"
+          cat keystore.properties | sed 's/password=.*/password=***/'
+
+      - name: Build Signed Android APK (Release)
+        run: |
+          echo "Building signed APK..."
+          npx tauri android build --apk --split-per-abi
+
+      - name: Sign APKs with apksigner
+        run: |
+          echo "Signing APKs with apksigner..."
+
+          # Find and sign all unsigned APKs
+          find src-tauri/gen/android/app/build/outputs/apk -name "*-unsigned.apk" -type f | while read unsigned_apk; do
+            # Create signed APK filename
+            signed_apk="${unsigned_apk/-unsigned.apk/-signed.apk}"
+            
+            echo "Signing: $unsigned_apk -> $signed_apk"
+            
+            # Sign the APK
+            $ANDROID_HOME/build-tools/34.0.0/apksigner sign \
+              --ks $RUNNER_TEMP/keystore.jks \
+              --ks-key-alias ${{ secrets.ANDROID_KEY_ALIAS }} \
+              --ks-pass pass:${{ secrets.ANDROID_KEY_PASSWORD }} \
+              --key-pass pass:${{ secrets.ANDROID_KEY_PASSWORD }} \
+              --out "$signed_apk" \
+              "$unsigned_apk"
+            
+            # Verify the signed APK
+            echo "Verifying signed APK: $signed_apk"
+            $ANDROID_HOME/build-tools/34.0.0/apksigner verify "$signed_apk"
+            
+            if [ $? -eq 0 ]; then
+              echo "✅ Successfully signed and verified: $(basename "$signed_apk")"
+            else
+              echo "❌ Failed to verify: $(basename "$signed_apk")"
+            fi
+          done
+
+      - name: Verify APK Signing
+        run: |
+          echo "Verifying APK signing status..."
+          find src-tauri/gen/android/app/build/outputs/apk -name "*-signed.apk" -type f | while read apk; do
+            echo "Checking: $apk"
+            if command -v aapt &> /dev/null; then
+              aapt dump badging "$apk" | grep "package:" || true
+            fi
+            # Also check with jarsigner
+            if command -v jarsigner &> /dev/null; then
+              echo "Jarsigner verification:"
+              jarsigner -verify -verbose -certs "$apk" || true
+            fi
+            echo "---"
+          done
+
+      - name: List Android Build Output
+        run: |
+          echo "Contents of src-tauri/gen/android/app/build/outputs/apk:"
+          find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" -type f || echo "No APK files found"
+          echo ""
+          echo "Signed APKs:"
+          find src-tauri/gen/android/app/build/outputs/apk -name "*-signed.apk" -type f || echo "No signed APK files found"
+
+      - name: Upload Signed Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-build-signed
+          path: |
+            src-tauri/gen/android/app/build/outputs/apk/**/*-signed.apk
+
+  web:
+    name: Build Web & Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [build-desktop, build-android]
+    # Only run GitHub Pages deployment in the forked repository
+    if: github.repository == 'image-compressor/image-compressor.github.io'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
       - name: Install dependencies
         run: npm install
-      - name: Build
+
+      - name: Build web
         run: npm run build
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload dist directory
           path: "./dist"
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  release:
+    name: Release to GitHub
+    runs-on: ubuntu-latest
+    needs: [build-desktop, build-android]
+    # Always run release job regardless of which repository
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Prepare release files
+        run: |
+          mkdir -p release-files
+
+          # Copy Android APKs (only signed ones)
+          find artifacts/android-build-signed -name "*-signed.apk" -type f -exec cp {} release-files/ \;
+
+          # Copy desktop builds
+          find artifacts/windows-build -name "*.exe" -type f -exec cp {} release-files/ \;
+          find artifacts/windows-build -name "*.msi" -type f -exec cp {} release-files/ \;
+          find artifacts/macos-intel-build -name "*.app" -type f -exec cp -r {} release-files/ \;
+          find artifacts/macos-apple-silicon-build -name "*.app" -type f -exec cp -r {} release-files/ \;
+          find artifacts/linux-build -name "*.deb" -type f -exec cp {} release-files/ \;
+          find artifacts/linux-build -name "*.AppImage" -type f -exec cp {} release-files/ \;
+
+          # List all files
+          echo "Release files:"
+          ls -la release-files/
+
+      - name: Generate release tag
+        id: tag
+        run: |
+          # Get version from package.json
+          VERSION=$(node -p "require('./package.json').version")
+          # Create a tag with project version and git SHA
+          TAG="v${VERSION}-$(echo ${{ github.sha }} | cut -c1-7)"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Generated tag: $TAG"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Release ${{ steps.tag.outputs.tag }}"
+          tag_name: ${{ steps.tag.outputs.tag }}
+          body: |
+            Automated release from commit ${{ github.sha }}
+
+            ## Changes
+            - Built for all platforms (Windows, macOS, Linux, Android)
+            - Web deployment to GitHub Pages
+
+            ## Downloads
+            - **Windows**: Download `.exe` or `.msi` files
+            - **macOS**: Download `.app` files
+            - **Linux**: Download `.deb` or `.AppImage` files
+            - **Android**: Download `.apk` files for direct installation
+          files: |
+            release-files/*
+          draft: false
+          prerelease: false

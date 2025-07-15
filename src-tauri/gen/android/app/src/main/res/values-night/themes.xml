@@ -1,0 +1,21 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.app" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        
+        <!-- Status bar color (use default system window background) -->
+        <item name="android:statusBarColor">?android:attr/colorBackground</item>
+        
+        <!-- Navigation bar color (use default system window background) -->
+        <item name="android:navigationBarColor">?android:attr/colorBackground</item>
+        
+        <!-- Make status bar icons light for dark theme -->
+        <item name="android:windowLightStatusBar" tools:targetApi="M">false</item>
+        
+        <!-- Make navigation bar icons light for dark theme -->
+        <item name="android:windowLightNavigationBar" tools:targetApi="O">false</item>
+        
+        <!-- Window background (use system default) -->
+        <item name="android:windowBackground">?android:attr/colorBackground</item>
+    </style>
+</resources>
