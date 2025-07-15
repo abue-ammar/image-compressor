@@ -211,7 +211,7 @@ jobs:
       - name: Build Signed Android APK (Release)
         run: |
           echo "Building signed APK..."
-          npx tauri android build --apk --split-per-abi --release
+          npx tauri android build --apk --split-per-abi
 
       - name: Verify APK Signing
         run: |
