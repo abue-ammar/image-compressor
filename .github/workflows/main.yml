@@ -2,7 +2,7 @@ name: Build All Platforms & Deploy
 
 on:
   push:
-    branches: ["tauri-migration"]
+    branches: ["logo-fix"]
   workflow_dispatch:
 
 permissions:
@@ -197,7 +197,10 @@ jobs:
           fi
           echo "Initializing Android project..."
           npx tauri android init
-
+      - name: Update Android Theme
+        run: |
+          echo "Updating Android theme to follow system theme..."
+          node update-android-theme.js
       - name: Setup Android Signing
         run: |
           cd src-tauri/gen/android
@@ -342,8 +345,10 @@ jobs:
       - name: Generate release tag
         id: tag
         run: |
-          # Create a timestamp-based tag
-          TAG="v$(date +'%Y.%m.%d')-$(echo ${{ github.sha }} | cut -c1-7)"
+          # Get version from package.json
+          VERSION=$(node -p "require('./package.json').version")
+          # Create a tag with project version and git SHA
+          TAG="v${VERSION}-$(echo ${{ github.sha }} | cut -c1-7)"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           echo "Generated tag: $TAG"
 
