@@ -212,8 +212,6 @@ jobs:
         run: |
           echo "Building signed APK..."
           npx tauri android build --apk --split-per-abi --release
-          echo "Building signed AAB..."
-          npx tauri android build --aab --release
 
       - name: Verify APK Signing
         run: |
@@ -235,8 +233,6 @@ jobs:
         run: |
           echo "Contents of src-tauri/gen/android/app/build/outputs/apk:"
           find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" -type f || echo "No APK files found"
-          echo "Contents of src-tauri/gen/android/app/build/outputs/bundle:"
-          find src-tauri/gen/android/app/build/outputs/bundle -name "*.aab" -type f || echo "No AAB files found"
 
       - name: Upload Signed Android APK
         uses: actions/upload-artifact@v4
@@ -244,7 +240,6 @@ jobs:
           name: android-build-signed
           path: |
             src-tauri/gen/android/app/build/outputs/apk/**/*.apk
-            src-tauri/gen/android/app/build/outputs/bundle/**/*.aab
 
   web:
     name: Build Web & Deploy to GitHub Pages
@@ -295,9 +290,8 @@ jobs:
         run: |
           mkdir -p release-files
 
-          # Copy Android APKs and AABs
+          # Copy Android APKs
           find artifacts/android-build-signed -name "*.apk" -type f -exec cp {} release-files/ \;
-          find artifacts/android-build-signed -name "*.aab" -type f -exec cp {} release-files/ \;
 
           # Copy desktop builds
           find artifacts/windows-build -name "*.exe" -type f -exec cp {} release-files/ \;
@@ -335,7 +329,7 @@ jobs:
             - **Windows**: Download `.exe` or `.msi` files
             - **macOS**: Download `.app` files
             - **Linux**: Download `.deb` or `.AppImage` files
-            - **Android**: Download `.apk` files for direct installation or `.aab` files for Play Store
+            - **Android**: Download `.apk` files for direct installation
           files: |
             release-files/*
           draft: false
