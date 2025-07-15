@@ -1,7 +1,7 @@
-import { isTauri } from "@tauri-apps/api/core";
 import { save } from "@tauri-apps/plugin-dialog";
 import { writeFile } from "@tauri-apps/plugin-fs";
 import { toast } from "sonner";
+import { isTauri } from "./platform";
 
 export const downloadZip = async (zipFile: Blob | null) => {
   if (!zipFile) {
