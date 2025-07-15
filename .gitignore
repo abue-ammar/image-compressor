@@ -46,6 +46,3 @@ src-tauri/Cargo.lock
 *.jks
 *.keystore
 upload-keystore.jks.base64
-
-# Temporary scripts
-update-icons.js

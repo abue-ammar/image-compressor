@@ -2,7 +2,7 @@ name: Build All Platforms & Deploy
 
 on:
   push:
-    branches: ["tauri-migration"]
+    branches: ["tauri-status-bar"]
   workflow_dispatch:
 
 permissions:
@@ -266,6 +266,11 @@ jobs:
           fi
           echo "Initializing Android project..."
           npx tauri android init
+
+      - name: Update Android Theme
+        run: |
+          echo "Updating Android theme to follow system theme..."
+          node update-android-theme.js
 
       - name: Setup Android Signing
         run: |

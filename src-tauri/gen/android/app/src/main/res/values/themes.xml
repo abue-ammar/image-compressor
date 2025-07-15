@@ -2,5 +2,23 @@
     <!-- Base application theme. -->
     <style name="Theme.app" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
+        
+        <!-- Status bar color (transparent to follow system) -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        
+        <!-- Navigation bar color (transparent to follow system) -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        
+        <!-- Make status bar icons dark for light theme -->
+        <item name="android:windowLightStatusBar" tools:targetApi="M">true</item>
+        
+        <!-- Make navigation bar icons dark for light theme -->
+        <item name="android:windowLightNavigationBar" tools:targetApi="O">true</item>
+        
+        <!-- Enable edge-to-edge display -->
+        <item name="android:windowLayoutInDisplayCutoutMode" tools:targetApi="P">shortEdges</item>
+        
+        <!-- Window background -->
+        <item name="android:windowBackground">@android:color/system_neutral1_0</item>
     </style>
 </resources>
