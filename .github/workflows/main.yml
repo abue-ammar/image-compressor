@@ -45,13 +45,11 @@ jobs:
           cache: "npm"
 
       - name: Install Dependencies
-        run: npm install
-
-      - name: Update Tauri Icons
+        run: npm install      - name: Update Tauri Icons
         run: |
           echo "Updating Tauri icons with custom logo..."
           node update-icons.js
-
+          
           # Generate ICO and ICNS files if ImageMagick is available
           if command -v convert &> /dev/null; then
             echo "Generating ICO file for Windows..."
@@ -100,6 +98,7 @@ jobs:
           else
             echo "ImageMagick not available, keeping existing ICO and ICNS files"
           fi
+        shell: bash
 
       - name: Install Rust Toolchain
         uses: dtolnay/rust-toolchain@stable
