@@ -213,10 +213,41 @@ jobs:
           echo "Building signed APK..."
           npx tauri android build --apk --split-per-abi
 
+      - name: Sign APKs with apksigner
+        run: |
+          echo "Signing APKs with apksigner..."
+
+          # Find and sign all unsigned APKs
+          find src-tauri/gen/android/app/build/outputs/apk -name "*-unsigned.apk" -type f | while read unsigned_apk; do
+            # Create signed APK filename
+            signed_apk="${unsigned_apk/-unsigned.apk/-signed.apk}"
+            
+            echo "Signing: $unsigned_apk -> $signed_apk"
+            
+            # Sign the APK
+            $ANDROID_HOME/build-tools/34.0.0/apksigner sign \
+              --ks $RUNNER_TEMP/keystore.jks \
+              --ks-key-alias ${{ secrets.ANDROID_KEY_ALIAS }} \
+              --ks-pass pass:${{ secrets.ANDROID_KEY_PASSWORD }} \
+              --key-pass pass:${{ secrets.ANDROID_KEY_PASSWORD }} \
+              --out "$signed_apk" \
+              "$unsigned_apk"
+            
+            # Verify the signed APK
+            echo "Verifying signed APK: $signed_apk"
+            $ANDROID_HOME/build-tools/34.0.0/apksigner verify "$signed_apk"
+            
+            if [ $? -eq 0 ]; then
+              echo "✅ Successfully signed and verified: $(basename "$signed_apk")"
+            else
+              echo "❌ Failed to verify: $(basename "$signed_apk")"
+            fi
+          done
+
       - name: Verify APK Signing
         run: |
           echo "Verifying APK signing status..."
-          find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" -type f | while read apk; do
+          find src-tauri/gen/android/app/build/outputs/apk -name "*-signed.apk" -type f | while read apk; do
             echo "Checking: $apk"
             if command -v aapt &> /dev/null; then
               aapt dump badging "$apk" | grep "package:" || true
@@ -233,13 +264,16 @@ jobs:
         run: |
           echo "Contents of src-tauri/gen/android/app/build/outputs/apk:"
           find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" -type f || echo "No APK files found"
+          echo ""
+          echo "Signed APKs:"
+          find src-tauri/gen/android/app/build/outputs/apk -name "*-signed.apk" -type f || echo "No signed APK files found"
 
       - name: Upload Signed Android APK
         uses: actions/upload-artifact@v4
         with:
           name: android-build-signed
           path: |
-            src-tauri/gen/android/app/build/outputs/apk/**/*.apk
+            src-tauri/gen/android/app/build/outputs/apk/**/*-signed.apk
 
   web:
     name: Build Web & Deploy to GitHub Pages
@@ -290,8 +324,8 @@ jobs:
         run: |
           mkdir -p release-files
 
-          # Copy Android APKs
-          find artifacts/android-build-signed -name "*.apk" -type f -exec cp {} release-files/ \;
+          # Copy Android APKs (only signed ones)
+          find artifacts/android-build-signed -name "*-signed.apk" -type f -exec cp {} release-files/ \;
 
           # Copy desktop builds
           find artifacts/windows-build -name "*.exe" -type f -exec cp {} release-files/ \;
