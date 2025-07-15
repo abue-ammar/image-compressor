@@ -197,6 +197,13 @@ jobs:
           fi
           echo "Initializing Android project..."
           npx tauri android init
+
+      - name: Update Android Icons
+        run: |
+          echo "Regenerating Android icons with latest logo..."
+          npx tauri icon public/logo.png
+          echo "Android icons updated successfully!"
+
       - name: Update Android Theme
         run: |
           echo "Updating Android theme to follow system theme..."
