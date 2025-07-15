@@ -208,13 +208,35 @@ jobs:
           echo "Keystore properties configured:"
           cat keystore.properties | sed 's/password=.*/password=***/'
 
-      - name: Build Signed Android APK
-        run: npx tauri android build --apk --split-per-abi
+      - name: Build Signed Android APK (Release)
+        run: |
+          echo "Building signed APK..."
+          npx tauri android build --apk --split-per-abi --release
+          echo "Building signed AAB..."
+          npx tauri android build --aab --release
+
+      - name: Verify APK Signing
+        run: |
+          echo "Verifying APK signing status..."
+          find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" -type f | while read apk; do
+            echo "Checking: $apk"
+            if command -v aapt &> /dev/null; then
+              aapt dump badging "$apk" | grep "package:" || true
+            fi
+            # Also check with jarsigner
+            if command -v jarsigner &> /dev/null; then
+              echo "Jarsigner verification:"
+              jarsigner -verify -verbose -certs "$apk" || true
+            fi
+            echo "---"
+          done
 
       - name: List Android Build Output
         run: |
           echo "Contents of src-tauri/gen/android/app/build/outputs/apk:"
           find src-tauri/gen/android/app/build/outputs/apk -name "*.apk" -type f || echo "No APK files found"
+          echo "Contents of src-tauri/gen/android/app/build/outputs/bundle:"
+          find src-tauri/gen/android/app/build/outputs/bundle -name "*.aab" -type f || echo "No AAB files found"
 
       - name: Upload Signed Android APK
         uses: actions/upload-artifact@v4
@@ -222,6 +244,7 @@ jobs:
           name: android-build-signed
           path: |
             src-tauri/gen/android/app/build/outputs/apk/**/*.apk
+            src-tauri/gen/android/app/build/outputs/bundle/**/*.aab
 
   web:
     name: Build Web & Deploy to GitHub Pages
@@ -268,12 +291,25 @@ jobs:
         with:
           path: ./artifacts
 
-      - name: Zip all builds
+      - name: Prepare release files
         run: |
-          cd artifacts
-          for dir in *; do
-            zip -r "../${dir}.zip" "$dir"
-          done
+          mkdir -p release-files
+
+          # Copy Android APKs and AABs
+          find artifacts/android-build-signed -name "*.apk" -type f -exec cp {} release-files/ \;
+          find artifacts/android-build-signed -name "*.aab" -type f -exec cp {} release-files/ \;
+
+          # Copy desktop builds
+          find artifacts/windows-build -name "*.exe" -type f -exec cp {} release-files/ \;
+          find artifacts/windows-build -name "*.msi" -type f -exec cp {} release-files/ \;
+          find artifacts/macos-intel-build -name "*.app" -type f -exec cp -r {} release-files/ \;
+          find artifacts/macos-apple-silicon-build -name "*.app" -type f -exec cp -r {} release-files/ \;
+          find artifacts/linux-build -name "*.deb" -type f -exec cp {} release-files/ \;
+          find artifacts/linux-build -name "*.AppImage" -type f -exec cp {} release-files/ \;
+
+          # List all files
+          echo "Release files:"
+          ls -la release-files/
 
       - name: Generate release tag
         id: tag
@@ -296,12 +332,11 @@ jobs:
             - Web deployment to GitHub Pages
 
             ## Downloads
-            - **Windows**: Download `windows-build.zip`
-            - **macOS (Intel)**: Download `macos-intel-build.zip`
-            - **macOS (Apple Silicon)**: Download `macos-apple-silicon-build.zip`
-            - **Linux**: Download `linux-build.zip`
-            - **Android**: Download `android-build-signed.zip`
+            - **Windows**: Download `.exe` or `.msi` files
+            - **macOS**: Download `.app` files
+            - **Linux**: Download `.deb` or `.AppImage` files
+            - **Android**: Download `.apk` files for direct installation or `.aab` files for Play Store
           files: |
-            *.zip
+            release-files/*
           draft: false
           prerelease: false
