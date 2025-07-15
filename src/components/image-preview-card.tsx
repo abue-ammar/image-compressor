@@ -1,4 +1,4 @@
-import { formatBytes } from "@/utils/utils";
+import { formatBytes } from "@/lib/utils";
 import { DownloadIcon, Eye, MoveRight } from "lucide-react";
 import { memo } from "react";
 import { PhotoView } from "react-photo-view";

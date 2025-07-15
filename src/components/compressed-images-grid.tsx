@@ -1,7 +1,7 @@
+import { downloadSingleImage } from "@/lib/download";
 import { Inbox } from "lucide-react";
 import { PhotoProvider } from "react-photo-view";
 import type { CompressedImage } from "../types/image-compressor";
-import { downloadSingleImage } from "../utils/download";
 import ImagePreviewCard from "./image-preview-card";
 
 interface CompressedImagesGridProps {

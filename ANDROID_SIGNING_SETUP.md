@@ -148,4 +148,4 @@ Once configured, every push to the `tauri-migration` branch will:
 3. Create a GitHub release with all platform builds
 4. Deploy the web version to GitHub Pages
 
-The signed APKs will be available in the `android-build-signed.zip` artifact in the GitHub release.
+The signed APKs will be available in the GitHub release.

@@ -1,5 +1,5 @@
+import { filterValidFiles } from "@/lib/file-validation";
 import { useState } from "react";
-import { filterValidFiles } from "../utils/file-validation";
 
 export const useDragAndDrop = (onFilesDropped: (files: File[]) => void) => {
   const [isDragActive, setIsDragActive] = useState<boolean>(false);

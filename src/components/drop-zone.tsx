@@ -1,7 +1,7 @@
+import { filterValidFiles } from "@/lib/file-validation";
 import { ImageIcon } from "lucide-react";
 import { useRef } from "react";
 import { useDragAndDrop } from "../hooks/useDragAndDrop";
-import { filterValidFiles } from "../utils/file-validation";
 
 interface DropZoneProps {
   onFilesSelected: (files: File[]) => void;

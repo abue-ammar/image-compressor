@@ -1,5 +1,5 @@
 import { Download, RefreshCcw } from "lucide-react";
-import { downloadZip } from "../utils/download";
+import { downloadZip } from "@/lib/download";
 import { Button } from "./ui/button";
 
 interface ActionButtonsProps {

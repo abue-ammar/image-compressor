@@ -1,7 +1,7 @@
+import { filterValidFiles } from "@/lib/file-validation";
+import { processImages } from "@/lib/image-compression";
 import { useCallback, useEffect, useState } from "react";
 import type { CompressedImage } from "../types/image-compressor";
-import { filterValidFiles } from "../utils/file-validation";
-import { processImages } from "../utils/image-compression";
 
 export const useImageCompression = () => {
   const [compressedImages, setCompressedImages] = useState<CompressedImage[]>(
