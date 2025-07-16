@@ -95,22 +95,9 @@ jobs:
           elif [ "${{ matrix.os }}" = "windows-latest" ]; then
             npx tauri build --target ${{ matrix.target }} --bundles nsis,msi
           elif [ "${{ matrix.os }}" = "macos-latest" ]; then
-            npx tauri build --target ${{ matrix.target }} --bundles app
+            # Build only dmg for macOS
+            npx tauri build --target ${{ matrix.target }} --bundles dmg
           fi
-        shell: bash
-
-      - name: Build DMG (macOS only)
-        if: matrix.os == 'macos-latest'
-        run: |
-          # Try to build DMG, but don't fail the entire job if it fails
-          echo "Attempting to build DMG..."
-          if npx tauri build --target ${{ matrix.target }} --bundles dmg; then
-            echo "DMG build successful"
-          else
-            echo "DMG build failed, but continuing with app bundle"
-            ls -la src-tauri/target/${{ matrix.target }}/release/bundle/ || echo "No bundle directory found"
-          fi
-        continue-on-error: true
         shell: bash
 
       - name: List Build Output
@@ -343,8 +330,8 @@ jobs:
           # Copy desktop builds
           find artifacts/windows-build -name "*.exe" -type f -exec cp {} release-files/ \;
           find artifacts/windows-build -name "*.msi" -type f -exec cp {} release-files/ \;
-          find artifacts/macos-intel-build -name "*.app" -type f -exec cp -r {} release-files/ \;
-          find artifacts/macos-apple-silicon-build -name "*.app" -type f -exec cp -r {} release-files/ \;
+          find artifacts/macos-intel-build -name "*.dmg" -type f -exec cp {} release-files/ \;
+          find artifacts/macos-apple-silicon-build -name "*.dmg" -type f -exec cp {} release-files/ \;
           find artifacts/linux-build -name "*.deb" -type f -exec cp {} release-files/ \;
           find artifacts/linux-build -name "*.AppImage" -type f -exec cp {} release-files/ \;
 
@@ -376,7 +363,7 @@ jobs:
 
             ## Downloads
             - **Windows**: Download `.exe` or `.msi` files
-            - **macOS**: Download `.app` files
+            - **macOS**: Download `.dmg` files (recommended installer)
             - **Linux**: Download `.deb` or `.AppImage` files
             - **Android**: Download `.apk` files for direct installation
           files: |

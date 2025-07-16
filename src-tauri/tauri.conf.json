@@ -13,8 +13,8 @@
     "windows": [
       {
         "title": "image-compressor",
-        "width": 800,
-        "height": 600,
+        "width": 1200,
+        "height": 800,
         "resizable": true,
         "fullscreen": false
       }
@@ -36,6 +36,14 @@
     "android": {
       "minSdkVersion": 28,
       "versionCode": 100
+    },
+    "macOS": {
+      "dmg": {
+        "windowSize": {
+          "width": 660,
+          "height": 400
+        }
+      }
     }
   },
   "plugins": {
