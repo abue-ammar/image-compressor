@@ -121,14 +121,11 @@ body::-webkit-scrollbar {
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --font-sans:
-    "Roboto Mono", "SF Mono", Monaco, "Cascadia Code", Consolas, "Courier New",
-    monospace;
+    "Cascadia Code", "SF Mono", Monaco, Consolas, "Courier New", monospace;
   --font-serif:
-    "Roboto Mono", "SF Mono", Monaco, "Cascadia Code", Consolas, "Courier New",
-    monospace;
+    "Cascadia Code", "SF Mono", Monaco, Consolas, "Courier New", monospace;
   --font-mono:
-    "Roboto Mono", "SF Mono", Monaco, "Cascadia Code", Consolas, "Courier New",
-    monospace;
+    "Cascadia Code", "SF Mono", Monaco, Consolas, "Courier New", monospace;
   --radius: 0.625rem;
   --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
@@ -182,14 +179,11 @@ body::-webkit-scrollbar {
   --sidebar-border: oklch(0.275 0 0);
   --sidebar-ring: oklch(0.439 0 0);
   --font-sans:
-    "Roboto Mono", "SF Mono", Monaco, "Cascadia Code", Consolas, "Courier New",
-    monospace;
+    "Cascadia Code", "SF Mono", Monaco, Consolas, "Courier New", monospace;
   --font-serif:
-    "Roboto Mono", "SF Mono", Monaco, "Cascadia Code", Consolas, "Courier New",
-    monospace;
+    "Cascadia Code", "SF Mono", Monaco, Consolas, "Courier New", monospace;
   --font-mono:
-    "Roboto Mono", "SF Mono", Monaco, "Cascadia Code", Consolas, "Courier New",
-    monospace;
+    "Cascadia Code", "SF Mono", Monaco, Consolas, "Courier New", monospace;
   --radius: 0.625rem;
   --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
