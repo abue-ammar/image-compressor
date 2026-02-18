@@ -4,7 +4,7 @@ Free and Open Source Image Compressor. Optimizes images `locally`, delivering un
 
 ## Live
 
-https://image-compressor.github.io
+https://image-compressor-9vj.pages.dev
 
 ## Architecture & Code Structure
 
