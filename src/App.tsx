@@ -40,9 +40,9 @@ function App() {
   }, [compressedImages.length]);
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-      <div className="flex h-screen flex-col overflow-hidden">
+      <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="container mx-auto flex-1 overflow-y-auto px-4">
+        <main className="container mx-auto flex-1 px-4">
           <Intro />
           <ImageQualitySlider
             value={value}

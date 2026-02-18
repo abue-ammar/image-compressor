@@ -39,7 +39,7 @@ export const downloadZip = async (zipFile: Blob | null) => {
   }
 };
 
-export const downloadSingleImage = async (file: string) => {
+export const downloadSingleImage = async (file: string, fileName?: string) => {
   try {
     const regexResult = /^data:(.+?)(?:;(?:.+?))?,/.exec(file);
     let extension = "jpg";
@@ -48,9 +48,11 @@ export const downloadSingleImage = async (file: string) => {
       extension = contentType.split("/")[1] || "jpg";
     }
 
+    const defaultFileName = fileName || `compressed_image.${extension}`;
+
     if (isTauri()) {
       const filePath = await save({
-        defaultPath: `compressed_image.${extension}`,
+        defaultPath: defaultFileName,
         filters: [{ name: "Images", extensions: [extension] }],
       });
 
@@ -69,7 +71,7 @@ export const downloadSingleImage = async (file: string) => {
     } else {
       const downloadLink = document.createElement("a");
       downloadLink.href = file;
-      downloadLink.download = `compressed_image.${extension}`;
+      downloadLink.download = defaultFileName;
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);

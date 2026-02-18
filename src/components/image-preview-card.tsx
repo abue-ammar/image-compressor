@@ -10,7 +10,7 @@ const ImagePreviewCard = memo(
     onSingleFileDownload,
     ...props
   }: {
-    onSingleFileDownload: (file: string) => void;
+    onSingleFileDownload: (file: string, fileName?: string) => void;
     content: string;
     fileName: string;
     originalImageSize: number;
@@ -54,7 +54,7 @@ const ImagePreviewCard = memo(
           size="icon"
           variant="ghost"
           className="text-muted-foreground/80 hover:text-foreground -me-2 size-8 hover:bg-transparent"
-          onClick={() => onSingleFileDownload(props?.content)}
+          onClick={() => onSingleFileDownload(props?.content, props?.fileName)}
         >
           <DownloadIcon aria-hidden="true" />
         </Button>

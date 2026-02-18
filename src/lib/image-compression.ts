@@ -4,6 +4,8 @@ import type { CompressedImage } from "../types/image-compressor";
 
 export const compressImage = (file: File, quality: number): Promise<string> => {
   return new Promise((resolve, reject) => {
+    const isPng = file.type === "image/png";
+
     new Compressor(file, {
       maxWidth: undefined,
       maxHeight: undefined,
@@ -12,8 +14,9 @@ export const compressImage = (file: File, quality: number): Promise<string> => {
       width: undefined,
       height: undefined,
       quality: quality / 100,
-      convertSize: 120000,
-      convertTypes: ["image/png"],
+      mimeType: isPng ? "image/webp" : "auto",
+      convertSize: Infinity,
+      convertTypes: [],
       success(result: Blob) {
         const reader = new FileReader();
         reader.readAsDataURL(result);
@@ -43,22 +46,45 @@ export const processImages = async (
     const base64Data = (compressedImg as string).split(",")[1];
     const binaryData = atob(base64Data);
     const compressedImageSize = binaryData.length;
-    const rate = ((compressedImageSize - file.size) / file.size) * 100;
     const dotIndex = file.name.lastIndexOf(".");
+    const baseName = dotIndex !== -1 ? file.name.slice(0, dotIndex) : file.name;
+    const originalExt = dotIndex !== -1 ? file.name.slice(dotIndex) : "";
+    const outputExt = originalExt;
+
+    // If compression made the file larger (e.g. re-compressing an already-lossy image),
+    // fall back to the original file so we never deliver something bigger than the input.
+    const useOriginal = compressedImageSize >= file.size;
+
+    let finalContent: string;
+    let finalSize: number;
+
+    if (useOriginal) {
+      finalContent = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+      });
+      finalSize = file.size;
+    } else {
+      finalContent = compressedImg as string;
+      finalSize = compressedImageSize;
+    }
+
+    const rate = ((finalSize - file.size) / file.size) * 100;
 
     compressedImgs.push({
-      fileName:
-        "compressed_" + file.name.slice(0, 8) + file.name.slice(dotIndex),
+      fileName: baseName + "-compressed" + outputExt,
       originalImageSize: file.size,
-      compressedImageSize: compressedImageSize,
+      compressedImageSize: finalSize,
       fileType: file.type,
-      content: compressedImg as string,
+      content: finalContent,
       compressionPercentage: rate.toFixed(2),
     });
 
-    const response = await fetch(compressedImg as string);
+    const response = await fetch(finalContent);
     const blob = await response.blob();
-    img?.file(`compressed_${file.name}`, blob);
+    img?.file(`${baseName}-compressed${outputExt}`, blob);
     counter = counter - 1;
 
     const progress = Math.floor(

@@ -6,14 +6,9 @@ import { useDragAndDrop } from "../hooks/useDragAndDrop";
 interface DropZoneProps {
   onFilesSelected: (files: File[]) => void;
   hasCompressedImages: boolean;
-  ref?: React.RefObject<HTMLParagraphElement | null>;
 }
 
-const DropZone = ({
-  onFilesSelected,
-  hasCompressedImages,
-  ref,
-}: DropZoneProps) => {
+const DropZone = ({ onFilesSelected, hasCompressedImages }: DropZoneProps) => {
   const dropAreaRef = useRef<HTMLLabelElement>(null);
 
   const {
@@ -67,9 +62,6 @@ const DropZone = ({
           {isDragActive ? "Drop your images here" : "Drag & drop images here"}
         </p>
         <p className="text-muted-foreground text-sm">JPG, JPEG, PNG, WEBP</p>
-        <p className="text-destructive text-xs" ref={ref}>
-          **PNG formatted images need to be larger than 120KB
-        </p>
       </div>
     </label>
   );

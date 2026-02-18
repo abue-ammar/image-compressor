@@ -12,14 +12,12 @@ export default defineConfig({
   },
   server: {
     open: true,
-    host: "0.0.0.0",
   },
   build: {
-    target: "esnext", // or 'es2017' for broader support
-    minify: "esbuild", // default, but explicit
-    sourcemap: false, // don't generate source maps in production
+    target: "esnext",
+    minify: "esbuild",
+    sourcemap: false,
     rollupOptions: {
-      // external: ['react', 'react-dom'], // Uncomment if loading from CDN
       treeshake: true,
     },
   },
