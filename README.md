@@ -193,12 +193,68 @@ npm run lint       # Run ESLint
 npm run type-check # Run TypeScript compiler check
 ```
 
+### Docker Deployment
+
+Run the web application in a container using the included `Dockerfile` or `docker-compose.yaml`. Docker serves the production build with nginx. Image compression still runs entirely in the browser; no files are uploaded to the server.
+
+#### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) installed on your machine
+- [Docker Compose](https://docs.docker.com/compose/) (included with Docker Desktop)
+
+#### Using Docker Compose (recommended)
+
+```bash
+# Build and start the container in the background
+docker compose up -d --build
+
+# Open http://localhost:8080 in your browser
+```
+
+To run on a different host port (for example, 3000):
+
+```bash
+PORT=3000 docker compose up -d --build
+```
+
+Stop the container:
+
+```bash
+docker compose down
+```
+
+#### Using Docker directly
+
+```bash
+# Build the image
+docker build -t image-compressor:latest .
+
+# Run the container
+docker run -d --name image-compressor -p 8080:8080 image-compressor:latest
+
+# Open http://localhost:8080 in your browser
+```
+
+To map a different host port:
+
+```bash
+docker run -d --name image-compressor -p 3000:8080 image-compressor:latest
+```
+
+View logs or stop the container:
+
+```bash
+docker logs -f image-compressor
+docker stop image-compressor && docker rm image-compressor
+```
+
 ### Development Workflow
 
 1. **Frontend Development**: Use `npm start` for hot-reload React development
 2. **Desktop App Development**: Use `npm run tauri dev` for Tauri development
 3. **Testing**: Run individual component tests with the modular structure
 4. **Building**: Use `npm run build` for web or `npm run tauri build` for desktop
+5. **Container Deployment**: Use `docker compose up -d --build` to run the production web build
 
 ### Project Highlights
 
